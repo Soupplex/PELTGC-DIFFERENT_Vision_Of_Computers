@@ -4,693 +4,274 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>PELTGC — Complete Documentation</title>
-<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;700;800&family=IBM+Plex+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:ital,wght@0,400;0,500;0,600;1,400&family=Syne:wght@400;600;700;800&display=swap" rel="stylesheet">
 <style>
-  :root {
-    --bg: #050507;
-    --surface: #0a0a0f;
-    --border: #151520;
-    --border-bright: #1e1e30;
-    --accent: #00ff88;
-    --accent2: #00aaff;
-    --warn: #ffaa00;
-    --danger: #ff4455;
-    --text: #ff3333;
-    --text-dim: #aa2222;
-    --text-muted: #cc2222;
-    --font-display: 'Syne', sans-serif;
-    --font-mono: 'IBM Plex Mono', monospace;
-  }
-
-  * { margin: 0; padding: 0; box-sizing: border-box; }
-  html { scroll-behavior: smooth; }
-
-  body {
-    background: var(--bg);
-    color: var(--text);
-    font-family: var(--font-mono);
-    font-size: 13px;
-    line-height: 1.7;
-    overflow-x: hidden;
-  }
-
-  body::before {
-    content: '';
-    position: fixed;
-    inset: 0;
-    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
-    pointer-events: none;
-    z-index: 1000;
-    opacity: 0.35;
-  }
-
-  body::after {
-    content: '';
-    position: fixed;
-    inset: 0;
-    background: repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,0,0,0.07) 2px, rgba(0,0,0,0.07) 4px);
-    pointer-events: none;
-    z-index: 999;
-  }
-
-  /* NAV */
-  .sidenav {
-    position: fixed;
-    left: 0;
-    top: 0;
-    bottom: 0;
-    width: 220px;
-    background: rgba(5,5,7,0.97);
-    border-right: 1px solid var(--border-bright);
-    padding: 40px 0;
-    overflow-y: auto;
-    z-index: 100;
-  }
-
-  .sidenav-title {
-    font-family: var(--font-display);
-    font-size: 0.9em;
-    font-weight: 800;
-    color: var(--accent);
-    padding: 0 20px 24px;
-    letter-spacing: -0.5px;
-    border-bottom: 1px solid var(--border);
-    margin-bottom: 16px;
-  }
-
-  .sidenav a {
-    display: block;
-    padding: 6px 20px;
-    font-size: 0.62em;
-    color: var(--text-muted);
-    text-decoration: none;
-    letter-spacing: 1px;
-    transition: color 0.15s, border-color 0.15s;
-    border-left: 2px solid transparent;
-  }
-
-  .sidenav a:hover {
-    color: var(--text);
-    border-left-color: var(--accent);
-  }
-
-  .sidenav .nav-group {
-    font-size: 0.58em;
-    color: var(--text-muted);
-    letter-spacing: 3px;
-    text-transform: uppercase;
-    padding: 16px 20px 6px;
-    opacity: 0.5;
-  }
-
-  /* MAIN */
-  .main {
-    margin-left: 220px;
-    max-width: 860px;
-    padding: 0 48px 100px;
-  }
-
-  @media (max-width: 768px) {
-    .sidenav { display: none; }
-    .main { margin-left: 0; padding: 0 20px 80px; }
-  }
-
-  /* HERO */
-  .hero {
-    padding: 80px 0 56px;
-    border-bottom: 1px solid var(--border-bright);
-    margin-bottom: 64px;
-    position: relative;
-  }
-
-  .hero-eyebrow {
-    font-size: 0.62em;
-    color: var(--accent);
-    letter-spacing: 4px;
-    text-transform: uppercase;
-    margin-bottom: 20px;
-    display: flex;
-    align-items: center;
-    gap: 10px;
-  }
-
-  .hero-eyebrow::before { content: ''; display: block; width: 24px; height: 1px; background: var(--accent); }
-
-  h1 {
-    font-family: var(--font-display);
-    font-size: clamp(3em, 7vw, 5.5em);
-    font-weight: 800;
-    color: #fff;
-    line-height: 1;
-    letter-spacing: -3px;
-    margin-bottom: 14px;
-  }
-
-  h1 .acc { color: var(--accent); }
-
-  .hero-tagline {
-    font-size: 0.72em;
-    color: var(--text-dim);
-    letter-spacing: 3px;
-    text-transform: uppercase;
-    margin-bottom: 28px;
-  }
-
-  .hero-manifesto {
-    font-family: var(--font-display);
-    font-size: 1.2em;
-    font-weight: 700;
-    color: rgba(255,255,255,0.12);
-    line-height: 1.6;
-    max-width: 560px;
-  }
-
-  .hero-manifesto strong { color: rgba(255,255,255,0.85); }
-
-  .hero-bar {
-    position: absolute;
-    bottom: -1px;
-    left: 0;
-    height: 2px;
-    width: 100px;
-    background: linear-gradient(90deg, var(--accent), transparent);
-  }
-
-  /* CHAPTER */
-  .chapter {
-    margin-bottom: 80px;
-    scroll-margin-top: 40px;
-  }
-
-  .chapter-header {
-    display: flex;
-    align-items: flex-start;
-    gap: 20px;
-    margin-bottom: 32px;
-    padding-bottom: 16px;
-    border-bottom: 1px solid var(--border-bright);
-  }
-
-  .chapter-num {
-    font-family: var(--font-display);
-    font-size: 3em;
-    font-weight: 800;
-    color: var(--border-bright);
-    line-height: 1;
-    flex-shrink: 0;
-    margin-top: -4px;
-  }
-
-  .chapter-meta { flex: 1; }
-
-  .chapter-label {
-    font-size: 0.6em;
-    letter-spacing: 4px;
-    text-transform: uppercase;
-    color: var(--accent2);
-    margin-bottom: 4px;
-  }
-
-  h2 {
-    font-family: var(--font-display);
-    font-size: 1.5em;
-    font-weight: 700;
-    color: #fff;
-    letter-spacing: -0.5px;
-  }
-
-  h3 {
-    font-family: var(--font-display);
-    font-size: 0.95em;
-    font-weight: 700;
-    color: var(--text);
-    margin: 28px 0 12px;
-    letter-spacing: -0.3px;
-  }
-
-  p {
-    color: var(--text-dim);
-    font-size: 0.75em;
-    line-height: 1.9;
-    margin-bottom: 14px;
-    max-width: 640px;
-  }
-
-  p strong { color: var(--text); font-weight: 500; }
-
-  .highlight {
-    background: rgba(0,255,136,0.05);
-    border: 1px solid rgba(0,255,136,0.15);
-    border-radius: 6px;
-    padding: 16px 20px;
-    margin: 20px 0;
-  }
-
-  .highlight p { color: var(--text); margin: 0; }
-
-  /* SUBSECTION */
-  .sub { margin: 24px 0; }
-
-  .sub-label {
-    font-size: 0.6em;
-    letter-spacing: 3px;
-    text-transform: uppercase;
-    color: var(--accent2);
-    margin-bottom: 12px;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-  }
-
-  .sub-label::after { content: ''; flex: 1; height: 1px; background: linear-gradient(90deg, var(--border-bright), transparent); }
-
-  /* COMPARE */
-  .compare {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 12px;
-    margin: 16px 0;
-  }
-
-  @media (max-width: 600px) { .compare { grid-template-columns: 1fr; } }
-
-  .cblock {
-    border-radius: 6px;
-    padding: 16px 18px;
-    border: 1px solid var(--border-bright);
-  }
-
-  .cblock.bad { border-color: rgba(255,68,85,0.2); background: rgba(255,68,85,0.025); }
-  .cblock.good { border-color: rgba(0,255,136,0.2); background: rgba(0,255,136,0.025); }
-
-  .cblock-title { font-size: 0.6em; letter-spacing: 2px; margin-bottom: 12px; font-weight: 500; }
-  .cblock.bad .cblock-title { color: var(--danger); }
-  .cblock.good .cblock-title { color: var(--accent); }
-
-  .code-line { font-size: 0.68em; line-height: 2.2; }
-  .cblock.bad .code-line { color: rgba(255,136,136,0.65); }
-  .cblock.good .code-line { color: rgba(136,255,136,0.85); }
-  .code-dim { color: var(--text-muted) !important; font-style: italic; }
-
-  /* POOL VIZ */
-  .pool-box {
-    border: 1px solid rgba(0,255,136,0.3);
-    border-radius: 8px;
-    padding: 20px;
-    background: rgba(0,255,136,0.015);
-    position: relative;
-    box-shadow: 0 0 60px rgba(0,255,136,0.04);
-    margin: 16px 0;
-  }
-
-  .pool-box-label {
-    position: absolute;
-    top: -10px;
-    left: 14px;
-    background: var(--bg);
-    color: var(--accent);
-    font-size: 0.6em;
-    padding: 0 8px;
-    letter-spacing: 2px;
-  }
-
-  .sub-pools {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
-    gap: 10px;
-  }
-
-  .sp {
-    border: 1px solid var(--border-bright);
-    border-radius: 6px;
-    padding: 12px;
-    background: var(--surface);
-    transition: border-color 0.2s;
-  }
-
-  .sp:hover { border-color: var(--accent2); }
-  .sp-title { color: var(--warn); font-size: 0.6em; letter-spacing: 2px; margin-bottom: 10px; }
-
-  .ins {
-    display: flex;
-    justify-content: space-between;
-    gap: 8px;
-    padding: 3px 0;
-    font-size: 0.63em;
-    border-bottom: 1px solid var(--border);
-  }
-
-  .ins:last-child { border: none; }
-  .idx { color: var(--danger); opacity: 0.6; }
-  .ok { color: var(--accent); }
-  .lazy { color: var(--text-muted); }
-  .merged { color: var(--accent2); }
-
-  /* THREAD VIZ */
-  .thread-diagram {
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-    margin: 16px 0;
-  }
-
-  .thread-row {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    font-size: 0.68em;
-  }
-
-  .thread-label {
-    width: 70px;
-    color: var(--accent2);
-    flex-shrink: 0;
-  }
-
-  .thread-bar {
-    height: 32px;
-    border-radius: 4px;
-    display: flex;
-    align-items: center;
-    padding: 0 12px;
-    font-size: 0.85em;
-    flex: 1;
-  }
-
-  .tbar-dup { background: rgba(255,68,85,0.1); border: 1px solid rgba(255,68,85,0.2); color: rgba(255,136,136,0.7); }
-  .tbar-work { background: rgba(0,255,136,0.08); border: 1px solid rgba(0,255,136,0.2); color: rgba(136,255,136,0.9); }
-  .tbar-ahead { background: rgba(0,170,255,0.08); border: 1px solid rgba(0,170,255,0.2); color: rgba(136,200,255,0.9); }
-  .tbar-free { background: transparent; border: 1px solid var(--border); color: var(--text-muted); }
-
-  .thread-result {
-    width: 120px;
-    color: var(--text-dim);
-    font-size: 0.85em;
-    flex-shrink: 0;
-  }
-
-  /* TIERS */
-  .tiers { display: flex; flex-direction: column; gap: 8px; margin: 16px 0; }
-
-  .tier {
-    display: flex;
-    align-items: flex-start;
-    gap: 16px;
-    padding: 14px 18px;
-    border: 1px solid var(--border-bright);
-    border-radius: 6px;
-    transition: transform 0.2s;
-  }
-
-  .tier:hover { transform: translateX(4px); }
-  .tier.common { border-left: 3px solid var(--accent); }
-  .tier.rare { border-left: 3px solid var(--warn); }
-  .tier.promoted { border-left: 3px solid var(--accent2); }
-
-  .tier-lbl { width: 80px; font-size: 0.62em; letter-spacing: 2px; font-weight: 500; flex-shrink: 0; }
-  .tier.common .tier-lbl { color: var(--accent); }
-  .tier.rare .tier-lbl { color: var(--warn); }
-  .tier.promoted .tier-lbl { color: var(--accent2); }
-
-  .tier-desc { color: var(--text-dim); font-size: 0.68em; flex: 1; }
-
-  .tier-tag {
-    font-size: 0.58em;
-    padding: 2px 10px;
-    border-radius: 20px;
-    flex-shrink: 0;
-    align-self: center;
-  }
-
-  .tier.common .tier-tag { background: rgba(0,255,136,0.1); color: var(--accent); }
-  .tier.rare .tier-tag { background: rgba(255,170,0,0.1); color: var(--warn); }
-  .tier.promoted .tier-tag { background: rgba(0,170,255,0.1); color: var(--accent2); }
-
-  /* POOL HIERARCHY */
-  .hierarchy {
-    display: flex;
-    flex-direction: column;
-    gap: 6px;
-    margin: 16px 0;
-  }
-
-  .hlevel {
-    border: 1px solid var(--border-bright);
-    border-radius: 6px;
-    padding: 12px 16px;
-    font-size: 0.68em;
-    display: flex;
-    align-items: center;
-    gap: 14px;
-  }
-
-  .hlevel.os { border-color: rgba(0,255,136,0.3); background: rgba(0,255,136,0.03); }
-  .hlevel.game { border-color: rgba(0,170,255,0.3); background: rgba(0,170,255,0.03); }
-  .hlevel.session { border-color: rgba(255,170,0,0.3); background: rgba(255,170,0,0.03); }
-
-  .hlevel-name { width: 80px; font-weight: 500; flex-shrink: 0; }
-  .hlevel.os .hlevel-name { color: var(--accent); }
-  .hlevel.game .hlevel-name { color: var(--accent2); }
-  .hlevel.session .hlevel-name { color: var(--warn); }
-
-  .hlevel-desc { color: var(--text-dim); flex: 1; }
-  .hlevel-tag { color: var(--text-muted); font-size: 0.85em; }
-
-  /* NETWORK */
-  .net-compare {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 12px;
-    margin: 16px 0;
-  }
-
-  .net-block { border: 1px solid var(--border-bright); border-radius: 6px; padding: 16px; }
-  .net-block.bad { border-color: rgba(255,68,85,0.2); }
-  .net-block.good { border-color: rgba(0,255,136,0.2); }
-
-  .net-title { font-size: 0.6em; letter-spacing: 2px; margin-bottom: 12px; }
-  .net-block.bad .net-title { color: var(--danger); }
-  .net-block.good .net-title { color: var(--accent); }
-
-  .pkt { background: rgba(255,255,255,0.02); border-radius: 4px; padding: 10px; font-size: 0.65em; line-height: 2.2; }
-  .pkt.bad-pkt { color: rgba(255,136,136,0.6); }
-  .pkt-number { font-family: var(--font-display); font-size: 4em; font-weight: 800; color: var(--accent); text-align: center; padding: 20px 0; line-height: 1; }
-  .pkt-note { color: var(--text-dim); font-size: 0.62em; margin-top: 8px; }
-
-  /* PGRID */
-  .pgrid {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 8px;
-    margin: 16px 0;
-  }
-
-  .pcell {
-    border: 1px solid var(--border-bright);
-    border-radius: 6px;
-    padding: 14px 10px;
-    text-align: center;
-    font-size: 0.63em;
-  }
-
-  .pcell.active { border-color: rgba(0,255,136,0.35); background: rgba(0,255,136,0.03); }
-  .pcell-size { font-family: var(--font-display); font-size: 1.8em; font-weight: 700; color: var(--accent2); display: block; margin-bottom: 4px; }
-  .pcell-core { color: var(--text-dim); font-size: 0.85em; margin-top: 4px; }
-
-  /* SECURITY */
-  .sec-rows { display: flex; flex-direction: column; gap: 6px; margin: 16px 0; }
-
-  .sec-row {
-    display: flex;
-    align-items: center;
-    gap: 14px;
-    padding: 10px 16px;
-    border: 1px solid var(--border-bright);
-    border-radius: 6px;
-    font-size: 0.68em;
-    transition: border-color 0.2s;
-  }
-
-  .sec-row.death { border-color: rgba(255,0,0,0.2); background: rgba(255,0,0,0.02); }
-  .sec-attempt { color: var(--danger); width: 80px; flex-shrink: 0; font-size: 0.9em; }
-  .sec-desc { color: var(--text-dim); flex: 1; }
-  .sec-result { color: var(--text-muted); font-size: 0.9em; }
-  .sec-row.death .sec-result { color: var(--danger); }
-
-  /* NDF */
-  .ndf { display: flex; flex-direction: column; gap: 8px; margin: 16px 0; }
-
-  .nrow { display: flex; align-items: center; gap: 12px; font-size: 0.68em; }
-
-  .nframe { border: 1px solid var(--border-bright); border-radius: 4px; padding: 4px 12px; width: 80px; text-align: center; }
-  .nframe.changed { border-color: rgba(255,170,0,0.4); color: var(--warn); }
-  .nframe.same { border-color: rgba(0,255,136,0.4); color: var(--accent); }
-  .narr { color: var(--text-muted); }
-  .nres { color: var(--text-dim); }
-  .nres.skip { color: var(--accent); }
-  .nres.render { color: var(--warn); }
-
-  /* VIDEO FRAMES */
-  .vframes { display: flex; gap: 6px; flex-wrap: wrap; margin: 16px 0; }
-
-  .vf { border: 1px solid var(--border-bright); border-radius: 4px; padding: 8px 12px; font-size: 0.62em; text-align: center; line-height: 2; min-width: 60px; transition: transform 0.15s; }
-  .vf:hover { transform: translateY(-2px); }
-  .vf.new { border-color: rgba(255,170,0,0.4); color: var(--warn); }
-  .vf.hit { border-color: rgba(0,255,136,0.4); color: var(--accent); }
-  .vf-label { color: var(--text-muted); font-size: 0.9em; }
-
-  /* POINTER */
-  .ptr-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin: 16px 0; }
-  .ptr-section { padding: 16px; border: 1px solid var(--border-bright); border-radius: 6px; }
-  .ptr-title { font-size: 0.6em; letter-spacing: 2px; margin-bottom: 14px; font-weight: 500; }
-  .ptr-title.bad { color: var(--danger); }
-  .ptr-title.good { color: var(--accent); }
-  .ptr-row { display: flex; align-items: center; gap: 10px; margin-bottom: 8px; font-size: 0.68em; }
-  .pname { color: var(--text-dim); width: 60px; }
-  .arrow { color: var(--text-muted); }
-  .addr { padding: 2px 10px; border-radius: 3px; font-size: 0.9em; }
-  .addr.da { background: rgba(255,68,85,0.1); border: 1px solid rgba(255,68,85,0.2); color: rgba(255,136,136,0.8); }
-  .addr.ma { background: rgba(0,255,136,0.08); border: 1px solid rgba(0,255,136,0.2); color: rgba(136,255,136,0.9); }
-
-  /* LANGUAGE */
-  .code-block {
-    background: var(--surface);
-    border: 1px solid var(--border-bright);
-    border-radius: 6px;
-    padding: 18px 20px;
-    margin: 16px 0;
-    font-size: 0.72em;
-    line-height: 2.2;
-    position: relative;
-  }
-
-  .code-block.bad { border-color: rgba(255,68,85,0.2); }
-  .code-block.good { border-color: rgba(0,255,136,0.2); }
-
-  .code-tag {
-    position: absolute;
-    top: -9px;
-    right: 12px;
-    background: var(--bg);
-    font-size: 0.58em;
-    padding: 0 8px;
-    letter-spacing: 2px;
-  }
-
-  .code-block.bad .code-tag { color: var(--danger); }
-  .code-block.good .code-tag { color: var(--accent); }
-
-  .kw { color: var(--accent2); }
-  .kw2 { color: var(--accent); }
-  .kw3 { color: var(--warn); }
-  .val { color: rgba(255,170,100,0.9); }
-  .cmt { color: var(--text-muted); font-style: italic; }
-  .bad-code { color: rgba(255,136,136,0.6); }
-  .good-code { color: rgba(136,255,136,0.85); }
-
-  /* ERROR MESSAGES */
-  .error-msgs { display: flex; flex-direction: column; gap: 8px; margin: 16px 0; }
-
-  .err-row {
-    display: flex;
-    align-items: flex-start;
-    gap: 14px;
-    padding: 12px 16px;
-    border: 1px solid var(--border-bright);
-    border-radius: 6px;
-    font-size: 0.68em;
-  }
-
-  .err-row.old { border-color: rgba(255,68,85,0.2); background: rgba(255,68,85,0.02); }
-  .err-row.new { border-color: rgba(0,255,136,0.2); background: rgba(0,255,136,0.02); }
-
-  .err-tag { width: 70px; flex-shrink: 0; font-size: 0.85em; font-weight: 500; }
-  .err-row.old .err-tag { color: var(--danger); }
-  .err-row.new .err-tag { color: var(--accent); }
-  .err-msg { flex: 1; }
-  .err-row.old .err-msg { color: rgba(255,136,136,0.6); }
-  .err-row.new .err-msg { color: rgba(136,255,136,0.85); }
-
-  /* NAMING */
-  .name-decode {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 8px;
-    margin: 16px 0;
-  }
-
-  .name-part {
-    border: 1px solid var(--border-bright);
-    border-radius: 6px;
-    padding: 12px 16px;
-    text-align: center;
-    min-width: 80px;
-  }
-
-  .name-part-val {
-    font-family: var(--font-display);
-    font-size: 1.3em;
-    font-weight: 700;
-    margin-bottom: 6px;
-  }
-
-  .name-part-desc { font-size: 0.6em; color: var(--text-dim); letter-spacing: 1px; }
-
-  .np-brand .name-part-val { color: var(--accent); }
-  .np-philosophy .name-part-val { color: var(--accent2); }
-  .np-reliability .name-part-val { color: var(--warn); }
-  .np-revision .name-part-val { color: rgba(200,200,255,0.8); }
-  .np-mode .name-part-val { color: rgba(255,200,100,0.8); }
-
-  /* NOTE */
-  .note {
-    color: var(--text-dim);
-    font-size: 0.65em;
-    margin-top: 12px;
-    padding: 10px 14px;
-    border-left: 2px solid var(--border-bright);
-    line-height: 1.8;
-  }
-
-  /* QUOTE */
-  .quote {
-    font-family: var(--font-display);
-    font-size: 1.05em;
-    font-weight: 700;
-    color: rgba(255,255,255,0.5);
-    border-left: 3px solid var(--accent);
-    padding: 12px 20px;
-    margin: 24px 0;
-    font-style: italic;
-  }
-
-  /* DIVIDER */
-  .divider { height: 1px; background: linear-gradient(90deg, transparent, var(--border-bright), transparent); margin: 56px 0; }
-
-  /* GLOW DOT */
-  .glow-dot {
-    display: inline-block;
-    width: 6px;
-    height: 6px;
-    border-radius: 50%;
-    background: var(--accent);
-    box-shadow: 0 0 8px var(--accent);
-    animation: pulse 2s ease-in-out infinite;
-  }
-
-  @keyframes pulse { 0%,100%{opacity:1;} 50%{opacity:0.3;} }
-
-  /* FOOTER */
-  .footer {
-    text-align: center;
-    padding: 48px 0 0;
-    border-top: 1px solid var(--border);
-  }
-
-  .footer-main { font-family: var(--font-display); font-size: 1.2em; font-weight: 700; color: rgba(255,255,255,0.1); margin-bottom: 8px; }
-  .footer-main strong { color: var(--accent); }
-  .footer-sub { font-size: 0.6em; color: var(--text-muted); letter-spacing: 3px; }
-  .footer-quote { font-size: 0.68em; color: var(--text-dim); margin-top: 20px; font-style: italic; }
+:root {
+  /* THEME: Deep Charcoal / Slate */
+  --bg: #121216; 
+  --surface: #1a1a20; 
+  --border: #282833; 
+  --border-bright: #3a3a4a; 
+
+  /* PALETTE: Blood Logic */
+  --accent: #ff2a4b;      /* Your glowing Red */
+  --accent2: #00e5ff;     /* Cyber Cyan */
+  --warn: #ffaa00;        /* Amber */
+  --danger: #ff0022;      /* Pure red */
+  
+  --good-bg: rgba(0, 234, 136, 0.05);
+  --good-border: rgba(0, 234, 136, 0.3);
+  --good-text: #00ea88;
+  
+  --bad-bg: rgba(255, 42, 75, 0.05);
+  --bad-border: rgba(255, 42, 75, 0.3);
+
+  /* TEXT: High-Contrast Optics */
+  --text: #ffffff;        
+  --text-dim: #c4c4d4;    
+  --text-muted: #888898;  
+  
+  --font-display: 'Syne', sans-serif;
+  --font-mono: 'IBM Plex Mono', monospace;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+html { scroll-behavior: smooth; background-color: var(--bg); }
+
+/* Custom OS-Level Scrollbar */
+::-webkit-scrollbar { width: 8px; background: var(--bg); }
+::-webkit-scrollbar-thumb { background: var(--border-bright); border-radius: 4px; }
+::-webkit-scrollbar-thumb:hover { background: var(--accent); }
+
+body {
+  background-color: var(--bg);
+  color: var(--text);
+  font-family: var(--font-mono);
+  font-size: 14px; 
+  line-height: 1.75;
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* NAV */
+.sidenav {
+  position: fixed; left: 0; top: 0; bottom: 0; width: 220px;
+  background: rgba(18, 18, 22, 0.95); 
+  border-right: 1px solid var(--border-bright);
+  padding: 40px 0; overflow-y: auto; z-index: 100;
+  backdrop-filter: blur(10px); 
+}
+
+.sidenav-title {
+  font-family: var(--font-display); font-size: 0.9em; font-weight: 800;
+  color: var(--accent); padding: 0 20px 24px; letter-spacing: -0.5px;
+  border-bottom: 1px solid var(--border); margin-bottom: 16px;
+  text-shadow: 0 0 10px rgba(255, 42, 75, 0.4); 
+}
+
+.sidenav a {
+  display: block; padding: 6px 20px; font-size: 0.75em;
+  color: var(--text-dim); text-decoration: none; letter-spacing: 1px;
+  transition: all 0.2s ease; border-left: 2px solid transparent;
+}
+
+.sidenav a:hover {
+  color: var(--text); border-left-color: var(--accent); 
+  background: rgba(255, 42, 75, 0.05); 
+}
+
+.sidenav .nav-group {
+  font-size: 0.65em; color: var(--text-muted); font-weight: 700;
+  letter-spacing: 3px; text-transform: uppercase; padding: 16px 20px 6px;
+}
+
+/* MAIN */
+.main { margin-left: 220px; max-width: 860px; padding: 0 48px 100px; }
+@media (max-width: 768px) {
+  .sidenav { display: none; }
+  .main { margin-left: 0; padding: 0 20px 80px; }
+}
+
+/* HERO */
+.hero { padding: 80px 0 56px; border-bottom: 1px solid var(--border-bright); margin-bottom: 64px; position: relative; }
+.hero-eyebrow { font-size: 0.65em; color: var(--accent); letter-spacing: 4px; text-transform: uppercase; margin-bottom: 20px; display: flex; align-items: center; gap: 10px; font-weight: 600;}
+.hero-eyebrow::before { content: ''; display: block; width: 24px; height: 1px; background: var(--accent); }
+h1 { font-family: var(--font-display); font-size: clamp(3em, 7vw, 5.5em); font-weight: 800; color: #fff; line-height: 1; letter-spacing: -3px; margin-bottom: 14px; }
+h1 .acc { color: var(--accent); text-shadow: 0 0 20px rgba(255, 42, 75, 0.6); }
+.hero-tagline { font-size: 0.72em; color: var(--text-dim); letter-spacing: 3px; text-transform: uppercase; margin-bottom: 28px; }
+.hero-manifesto { font-family: var(--font-display); font-size: 1.25em; font-weight: 700; color: var(--text-muted); line-height: 1.6; max-width: 560px; }
+.hero-manifesto strong { color: var(--text); }
+.hero-bar { position: absolute; bottom: -1px; left: 0; height: 2px; width: 100px; background: linear-gradient(90deg, var(--accent), transparent); }
+
+/* CHAPTER */
+.chapter { margin-bottom: 80px; scroll-margin-top: 40px; }
+.chapter-header { display: flex; align-items: flex-start; gap: 20px; margin-bottom: 32px; padding-bottom: 16px; border-bottom: 1px solid var(--border-bright); }
+.chapter-num { font-family: var(--font-display); font-size: 3em; font-weight: 800; color: var(--border-bright); line-height: 1; flex-shrink: 0; margin-top: -4px; }
+.chapter-meta { flex: 1; }
+.chapter-label { font-size: 0.6em; letter-spacing: 4px; text-transform: uppercase; color: var(--accent2); margin-bottom: 4px; }
+h2 { font-family: var(--font-display); font-size: 1.5em; font-weight: 700; color: #fff; letter-spacing: -0.5px; }
+h3 { font-family: var(--font-display); font-size: 1em; font-weight: 700; color: var(--text); margin: 28px 0 12px; letter-spacing: -0.3px; }
+p { color: var(--text-dim); font-size: 0.8em; line-height: 1.9; margin-bottom: 14px; max-width: 640px; }
+p strong { color: var(--text); font-weight: 600; }
+
+.highlight { background: var(--bad-bg); border: 1px solid var(--bad-border); border-radius: 6px; padding: 16px 20px; margin: 20px 0; border-left: 3px solid var(--accent); }
+.highlight p { color: var(--text); margin: 0; }
+
+/* SUBSECTION */
+.sub { margin: 24px 0; }
+.sub-label { font-size: 0.65em; font-weight: 600; letter-spacing: 3px; text-transform: uppercase; color: var(--accent2); margin-bottom: 12px; display: flex; align-items: center; gap: 8px; }
+.sub-label::after { content: ''; flex: 1; height: 1px; background: linear-gradient(90deg, var(--border-bright), transparent); }
+
+/* COMPARE BLOCKS */
+.compare { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin: 16px 0; }
+@media (max-width: 600px) { .compare { grid-template-columns: 1fr; } }
+.cblock { border-radius: 6px; padding: 16px 18px; border: 1px solid var(--border-bright); background: var(--surface); }
+.cblock.bad { border-color: var(--bad-border); background: var(--bad-bg); }
+.cblock.good { border-color: var(--good-border); background: var(--good-bg); }
+.cblock-title { font-size: 0.65em; letter-spacing: 2px; margin-bottom: 12px; font-weight: 600; }
+.cblock.bad .cblock-title { color: var(--accent); }
+.cblock.good .cblock-title { color: var(--good-text); }
+.code-line { font-size: 0.7em; line-height: 2.2; }
+.cblock.bad .code-line { color: #ff8892; }
+.cblock.good .code-line { color: #88ffc2; }
+.code-dim { color: var(--text-muted) !important; font-style: italic; }
+
+/* POOL VIZ */
+.pool-box { border: 1px solid rgba(0, 229, 255, 0.25); border-radius: 8px; padding: 20px; background: rgba(0, 229, 255, 0.02); position: relative; margin: 16px 0; }
+.pool-box-label { position: absolute; top: -10px; left: 14px; background: var(--bg); color: var(--accent2); font-size: 0.6em; font-weight: 600; padding: 0 8px; letter-spacing: 2px; }
+.sub-pools { display: grid; grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); gap: 10px; }
+.sp { border: 1px solid var(--border-bright); border-radius: 6px; padding: 12px; background: var(--surface); transition: border-color 0.2s; }
+.sp:hover { border-color: var(--accent2); }
+.sp-title { color: var(--warn); font-size: 0.65em; letter-spacing: 2px; margin-bottom: 10px; font-weight: 600; }
+.ins { display: flex; justify-content: space-between; gap: 8px; padding: 3px 0; font-size: 0.65em; border-bottom: 1px solid var(--border); }
+.ins:last-child { border: none; }
+.idx { color: var(--accent); opacity: 0.8; }
+.ok { color: var(--good-text); }
+.lazy { color: var(--text-muted); }
+.merged { color: var(--accent2); }
+
+/* THREAD VIZ */
+.thread-diagram { display: flex; flex-direction: column; gap: 10px; margin: 16px 0; }
+.thread-row { display: flex; align-items: center; gap: 10px; font-size: 0.7em; }
+.thread-label { width: 70px; color: var(--accent); flex-shrink: 0; font-weight: 600; }
+.thread-bar { height: 32px; border-radius: 4px; display: flex; align-items: center; padding: 0 12px; font-size: 0.85em; flex: 1; font-weight: 500;}
+.tbar-dup { background: var(--bad-bg); border: 1px solid var(--bad-border); color: #ff8892; }
+.tbar-work { background: var(--good-bg); border: 1px solid var(--good-border); color: #88ffc2; }
+.tbar-ahead { background: rgba(0, 229, 255, 0.1); border: 1px solid rgba(0, 229, 255, 0.25); color: #88f2ff; }
+.tbar-free { background: transparent; border: 1px dashed var(--border-bright); color: var(--text-muted); }
+.thread-result { width: 120px; color: var(--text-dim); font-size: 0.85em; flex-shrink: 0; }
+
+/* TIERS */
+.tiers { display: flex; flex-direction: column; gap: 8px; margin: 16px 0; }
+.tier { display: flex; align-items: flex-start; gap: 16px; padding: 14px 18px; border: 1px solid var(--border-bright); border-radius: 6px; transition: transform 0.2s; background: var(--surface); }
+.tier:hover { transform: translateX(4px); border-color: var(--border-bright); }
+.tier.common { border-left: 3px solid var(--good-text); }
+.tier.rare { border-left: 3px solid var(--warn); }
+.tier.promoted { border-left: 3px solid var(--accent2); }
+.tier-lbl { width: 80px; font-size: 0.65em; letter-spacing: 2px; font-weight: 700; flex-shrink: 0; }
+.tier.common .tier-lbl { color: var(--good-text); }
+.tier.rare .tier-lbl { color: var(--warn); }
+.tier.promoted .tier-lbl { color: var(--accent2); }
+.tier-desc { color: var(--text-dim); font-size: 0.7em; flex: 1; }
+.tier-tag { font-size: 0.6em; padding: 2px 10px; border-radius: 20px; flex-shrink: 0; align-self: center; font-weight: 600; }
+.tier.common .tier-tag { background: var(--good-bg); color: var(--good-text); }
+.tier.rare .tier-tag { background: rgba(255, 170, 0, 0.1); color: var(--warn); }
+.tier.promoted .tier-tag { background: rgba(0, 229, 255, 0.1); color: var(--accent2); }
+
+/* POOL HIERARCHY */
+.hierarchy { display: flex; flex-direction: column; gap: 6px; margin: 16px 0; }
+.hlevel { border: 1px solid var(--border-bright); border-radius: 6px; padding: 12px 16px; font-size: 0.7em; display: flex; align-items: center; gap: 14px; }
+.hlevel.os { border-color: var(--good-border); background: var(--good-bg); }
+.hlevel.game { border-color: rgba(0, 229, 255, 0.3); background: rgba(0, 229, 255, 0.05); }
+.hlevel.session { border-color: rgba(255, 170, 0, 0.3); background: rgba(255, 170, 0, 0.05); }
+.hlevel-name { width: 80px; font-weight: 600; flex-shrink: 0; }
+.hlevel.os .hlevel-name { color: var(--good-text); }
+.hlevel.game .hlevel-name { color: var(--accent2); }
+.hlevel.session .hlevel-name { color: var(--warn); }
+.hlevel-desc { color: var(--text-dim); flex: 1; }
+.hlevel-tag { color: var(--text-muted); font-size: 0.85em; }
+
+/* NETWORK */
+.net-compare { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin: 16px 0; }
+.net-block { border: 1px solid var(--border-bright); border-radius: 6px; padding: 16px; background: var(--surface); }
+.net-block.bad { border-color: var(--bad-border); }
+.net-block.good { border-color: var(--good-border); }
+.net-title { font-size: 0.65em; font-weight: 600; letter-spacing: 2px; margin-bottom: 12px; }
+.net-block.bad .net-title { color: var(--accent); }
+.net-block.good .net-title { color: var(--good-text); }
+.pkt { background: #ffffff05; border-radius: 4px; padding: 10px; font-size: 0.7em; line-height: 2.2; border: 1px solid var(--border); }
+.pkt.bad-pkt { color: #ff8892; }
+.pkt-number { font-family: var(--font-display); font-size: 4em; font-weight: 800; color: var(--good-text); text-align: center; padding: 20px 0; line-height: 1; }
+.pkt-note { color: var(--text-dim); font-size: 0.65em; margin-top: 8px; text-align: center; }
+
+/* PGRID */
+.pgrid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin: 16px 0; }
+.pcell { border: 1px solid var(--border-bright); border-radius: 6px; padding: 14px 10px; text-align: center; font-size: 0.65em; background: var(--surface); }
+.pcell.active { border-color: var(--good-border); background: var(--good-bg); box-shadow: inset 0 0 20px rgba(0, 234, 136, 0.05); }
+.pcell-size { font-family: var(--font-display); font-size: 1.8em; font-weight: 700; color: var(--accent2); display: block; margin-bottom: 4px; }
+.pcell-core { color: var(--text-dim); font-size: 0.85em; margin-top: 4px; }
+
+/* SECURITY */
+.sec-rows { display: flex; flex-direction: column; gap: 6px; margin: 16px 0; }
+.sec-row { display: flex; align-items: center; gap: 14px; padding: 10px 16px; border: 1px solid var(--border-bright); border-radius: 6px; font-size: 0.7em; transition: border-color 0.2s; background: var(--surface); }
+.sec-row.death { border-color: rgba(255, 0, 34, 0.4); background: rgba(255, 0, 34, 0.05); }
+.sec-attempt { color: var(--danger); width: 80px; flex-shrink: 0; font-weight: 600; }
+.sec-desc { color: var(--text-dim); flex: 1; }
+.sec-result { color: var(--text-muted); font-weight: 600; }
+.sec-row.death .sec-result { color: var(--accent); text-shadow: 0 0 8px rgba(255, 42, 75, 0.6);}
+
+/* LANGUAGE & CODE */
+.code-block { background: #0a0a0d; border: 1px solid var(--border-bright); border-radius: 6px; padding: 18px 20px; margin: 16px 0; font-size: 0.75em; line-height: 2.2; position: relative; }
+.code-block.bad { border-color: var(--bad-border); }
+.code-block.good { border-color: var(--good-border); }
+.code-tag { position: absolute; top: -10px; right: 12px; background: var(--bg); font-weight: 600; font-size: 0.6em; padding: 0 8px; letter-spacing: 2px; border: 1px solid var(--border-bright); border-radius: 4px; }
+.code-block.bad .code-tag { color: var(--accent); border-color: var(--bad-border); }
+.code-block.good .code-tag { color: var(--good-text); border-color: var(--good-border); }
+
+.kw { color: var(--accent2); } 
+.kw2 { color: var(--accent); } 
+.kw3 { color: var(--warn); }  
+.val { color: #ffb86c; }
+.cmt { color: #6272a4; font-style: italic; }
+.bad-code { color: #ff8892; }
+.good-code { color: #88ffc2; }
+
+/* ERROR MESSAGES */
+.error-msgs { display: flex; flex-direction: column; gap: 8px; margin: 16px 0; }
+.err-row { display: flex; align-items: flex-start; gap: 14px; padding: 12px 16px; border: 1px solid var(--border-bright); border-radius: 6px; font-size: 0.7em; }
+.err-row.old { border-color: var(--bad-border); background: var(--bad-bg); }
+.err-row.new { border-color: var(--good-border); background: var(--good-bg); }
+.err-tag { width: 70px; flex-shrink: 0; font-weight: 700; font-size: 0.8em; }
+.err-row.old .err-tag { color: var(--accent); }
+.err-row.new .err-tag { color: var(--good-text); }
+.err-msg { flex: 1; color: var(--text-dim); }
+
+/* NAMING */
+.name-decode { display: flex; flex-wrap: wrap; gap: 8px; margin: 16px 0; }
+.name-part { border: 1px solid var(--border-bright); border-radius: 6px; padding: 12px 16px; text-align: center; min-width: 80px; background: var(--surface); }
+.name-part-val { font-family: var(--font-display); font-size: 1.3em; font-weight: 700; margin-bottom: 6px; }
+.name-part-desc { font-size: 0.65em; color: var(--text-muted); letter-spacing: 1px; font-weight: 600; text-transform: uppercase; }
+.np-brand .name-part-val { color: var(--accent); text-shadow: 0 0 8px rgba(255, 42, 75, 0.4); }
+.np-philosophy .name-part-val { color: var(--accent2); }
+.np-reliability .name-part-val { color: var(--good-text); }
+.np-revision .name-part-val { color: #bd93f9; }
+.np-mode .name-part-val { color: #f1fa8c; }
+
+/* MISC */
+.note { color: var(--text-dim); font-size: 0.7em; margin-top: 12px; padding: 12px 16px; border-left: 3px solid var(--border-bright); background: var(--surface); line-height: 1.8; border-radius: 0 4px 4px 0; }
+.quote { font-family: var(--font-display); font-size: 1.1em; font-weight: 700; color: var(--text-dim); border-left: 3px solid var(--accent); padding: 12px 20px; margin: 24px 0; font-style: italic; background: linear-gradient(90deg, rgba(255, 42, 75, 0.05), transparent); }
+.divider { height: 1px; background: linear-gradient(90deg, transparent, var(--border-bright), transparent); margin: 56px 0; }
+
+.glow-dot { display: inline-block; width: 8px; height: 8px; border-radius: 50%; background: var(--accent); box-shadow: 0 0 12px var(--accent); animation: pulse 2s ease-in-out infinite; }
+@keyframes pulse { 0%,100%{opacity:1;} 50%{opacity:0.4;} }
+
+/* FOOTER */
+.footer { text-align: center; padding: 48px 0 0; border-top: 1px solid var(--border); }
+.footer-main { font-family: var(--font-display); font-size: 1.2em; font-weight: 700; color: var(--text-muted); margin-bottom: 8px; }
+.footer-main strong { color: var(--accent); text-shadow: 0 0 8px rgba(255, 42, 75, 0.4); }
+.footer-sub { font-size: 0.65em; color: var(--text-muted); letter-spacing: 3px; font-weight: 600;}
+.footer-quote { font-size: 0.7em; color: var(--text-muted); margin-top: 20px; font-style: italic; }
 </style>
 </head>
 <body>
@@ -790,26 +371,26 @@
       <div class="sub-pools">
         <div class="sp">
           <div class="sp-title">MATH</div>
-          <div class="ins"><span><span class="idx">[1]</span> ADD</span><span class="ok">JIT</span></div>
-          <div class="ins"><span><span class="idx">[2]</span> MUL</span><span class="ok">JIT</span></div>
+          <div class="ins"><span><span class="idx">[1]</span> ADD</span><span class="ok">ART</span></div>
+          <div class="ins"><span><span class="idx">[2]</span> MUL</span><span class="ok">ART</span></div>
           <div class="ins"><span><span class="idx">[3]</span> SUB</span><span class="lazy">lazy</span></div>
         </div>
         <div class="sp">
           <div class="sp-title">PHYSICS</div>
-          <div class="ins"><span><span class="idx">[4]</span> BOUNCE</span><span class="ok">JIT</span></div>
-          <div class="ins"><span><span class="idx">[5]</span> GRAV</span><span class="ok">JIT</span></div>
+          <div class="ins"><span><span class="idx">[4]</span> BOUNCE</span><span class="ok">ART</span></div>
+          <div class="ins"><span><span class="idx">[5]</span> GRAV</span><span class="ok">ART</span></div>
           <div class="ins"><span><span class="idx">[6]</span> COLLIDE</span><span class="lazy">lazy</span></div>
         </div>
         <div class="sp">
           <div class="sp-title">VIDEO</div>
-          <div class="ins"><span><span class="idx">[7]</span> DCT_A</span><span class="ok">JIT</span></div>
-          <div class="ins"><span><span class="idx">[8]</span> IDCT_B</span><span class="ok">JIT</span></div>
+          <div class="ins"><span><span class="idx">[7]</span> DCT_A</span><span class="ok">ART</span></div>
+          <div class="ins"><span><span class="idx">[8]</span> IDCT_B</span><span class="ok">ART</span></div>
           <div class="ins"><span><span class="idx">[9]</span> INTRA</span><span class="lazy">lazy</span></div>
         </div>
         <div class="sp">
           <div class="sp-title">ENCODING</div>
-          <div class="ins"><span><span class="idx">[10]</span> MOV</span><span class="ok">JIT</span></div>
-          <div class="ins"><span><span class="idx">[11]</span> PUSH</span><span class="ok">JIT</span></div>
+          <div class="ins"><span><span class="idx">[10]</span> MOV</span><span class="ok">ART</span></div>
+          <div class="ins"><span><span class="idx">[11]</span> PUSH</span><span class="ok">ART</span></div>
           <div class="ins"><span><span class="idx">[12]</span> POP</span><span class="lazy">lazy</span></div>
         </div>
         <div class="sp">
@@ -820,15 +401,15 @@
         </div>
         <div class="sp">
           <div class="sp-title">VERTICES</div>
-          <div class="ins"><span><span class="idx">[16]</span> tree_A</span><span class="ok">JIT</span></div>
-          <div class="ins"><span><span class="idx">[17]</span> brick_B</span><span class="ok">JIT</span></div>
+          <div class="ins"><span><span class="idx">[16]</span> tree_A</span><span class="ok">ART</span></div>
+          <div class="ins"><span><span class="idx">[17]</span> brick_B</span><span class="ok">ART</span></div>
           <div class="ins"><span><span class="idx">[18]</span> grass_C</span><span class="lazy">lazy</span></div>
         </div>
       </div>
     </div>
 
-    <h3>What JIT and Lazy Mean</h3>
-    <p><strong>JIT</strong> (Just In Time) means the entry was computed the moment it was first needed and immediately stored. The first time BOUNCE was required, it ran, got its index, and will never run again. Every future call routes to [4] instantly.</p>
+    <h3>What ART and Lazy Mean</h3>
+    <p><strong>ART</strong> (At Runtime) means the entry was computed the moment it was first needed and immediately stored. The first time BOUNCE was required, it ran, got its index, and will never run again. Every future call routes to [4] instantly.</p>
     <p><strong>Lazy</strong> means the entry exists in the pool structure but has not been computed yet — it is reserved and indexed, but its value is still pending. The Script Queue has already seen it coming and assigned it a slot. When the calculation actually arrives, the slot is already waiting. No allocation needed. Just fill and go.</p>
     <p><strong>Merged</strong> means multiple pointers were collapsed into one entry. See Chapter 05.</p>
 
@@ -865,7 +446,7 @@
       </div>
       <div class="cblock good">
         <div class="cblock-title">PELTGC — pool it once</div>
-        <div class="code-line">[1] &nbsp;&nbsp;&nbsp; JIT compiled — first time</div>
+        <div class="code-line">[1] &nbsp;&nbsp;&nbsp; ART compiled — first time</div>
         <div class="code-line">[1] &nbsp;&nbsp;&nbsp; free</div>
         <div class="code-line">[1] &nbsp;&nbsp;&nbsp; free</div>
         <div class="code-line">[1] &nbsp;&nbsp;&nbsp; free</div>
@@ -873,10 +454,7 @@
       </div>
     </div>
 
-    <h3>Adaptive Precision for Floating Point</h3>
-    <p>Floating point values are almost never exactly equal twice — 2.3471 and 2.3472 look different to a strict comparator but are identical to human perception. PELTGC solves this by performing the full accurate calculation first, then <strong>truncating only the search key</strong> used to find a pool match.</p>
-    <p>The result stored in the pool is always precise. The key used to find it is as coarse as needed. If no match at 4 decimal places — drop to 3. Still no match — drop to 2. The pool always finds a home. The physics is never compromised.</p>
-    <p>The pool stores <strong>perceived reality</strong>, not raw reality. Differences below the threshold of human perception are noise, not information. The pool ignores noise by design.</p>
+    <p><strong>ART</strong> — At Runtime — means the entry was compiled and pooled the moment it was first needed. Not ahead of time, not lazily deferred — exactly when it arrived, it was caught, stored, and indexed. Every future call routes to that index at cache speed. The pool stores <strong>perceived reality</strong>, not raw reality. How it handles values that are close but not identical is covered in the next chapter — Digit Trimming.</p>
   </div>
 
 <div class="divider"></div>
@@ -914,8 +492,28 @@
 
     <p>The algorithm needs no context, no configuration, no domain knowledge. It trims until the pool itself confirms a match. The pool defines the threshold <strong>by what it already contains</strong>. Self-calibrating. Zero developer input required.</p>
 
+    <h3>Nudging — The Harmless Adjustment</h3>
+    <p>Sometimes trimming isn't even necessary. If two values are imperceptibly close — like <code>1.00002</code> and <code>1.00001</code> — and adjusting one to match the other causes no perceivable difference in physics, rendering, or audio, the pool simply <strong>nudges</strong> the incoming value to match the existing entry. No trimming. No new entry. Just a tiny harmless correction that collapses two nearly-identical values into one.</p>
+
+    <div class="compare">
+      <div class="cblock bad">
+        <div class="cblock-title">Traditional — strict equality</div>
+        <div class="code-line bad-code">1.00001 → stored as entry A</div>
+        <div class="code-line bad-code">1.00002 → no match found</div>
+        <div class="code-line bad-code">1.00002 → stored as entry B</div>
+        <div class="code-line bad-code">Two entries. Imperceptible difference.</div>
+      </div>
+      <div class="cblock good">
+        <div class="cblock-title">PELTGC — nudge to match</div>
+        <div class="code-line good-code">1.00001 → stored as entry A</div>
+        <div class="code-line good-code">1.00002 → difference is harmless</div>
+        <div class="code-line good-code">nudge → 1.00001 → matches entry A</div>
+        <div class="code-line good-code">One entry. Zero perceivable difference.</div>
+      </div>
+    </div>
+
     <div class="highlight">
-      <p>This also means the threshold is different per domain automatically. Physics positions, audio frequencies, pixel coordinates — each finds its own natural precision level through the same algorithm. One mechanism. Universal application.</p>
+      <p>Digit trimming and nudging work together. Trimming finds matches by reducing precision. Nudging finds matches by making a harmless adjustment. Both serve the same goal: collapse what is imperceptibly different into what is already known. One mechanism. Universal application. The threshold is always human perception.</p>
     </div>
   </div>
 
@@ -927,52 +525,49 @@
       <div class="chapter-num">05</div>
       <div class="chapter-meta">
         <div class="chapter-label">Foundation</div>
-        <h2>Merged Pointers — Chain Compression</h2>
+        <h2>Merged Pointers — Bytecode Deduplication</h2>
       </div>
     </div>
 
-    <p>Pointer merging is not just collapsing duplicates. It is <strong>compressing entire instruction chains</strong> down to only the parts the pool does not already know.</p>
+    <p>If two places in the bytecode perform the exact same function with the same linking — they are not two instructions. They are one instruction referenced twice. PELTGC deletes the duplicate and links both call sites to the single surviving copy. The bytecode shrinks. The pool entry count stays correct. Nothing is lost.</p>
 
-    <p>A disassembly sequence has addresses: 1, 2, 3, 4, 5. If address 3's result is already in the pool, addresses 1 and 2 are merged away entirely. Execution jumps straight to address 3's pooled result and continues from there. The chain is not deduplicated — it is <strong>shortened.</strong></p>
+    <div class="quote">Two identical sentences in a book don't need to be printed twice. Print it once. Reference it twice. The meaning is identical. The space is saved.</div>
+
+    <h3>Same Function. Same Linking. One Entry.</h3>
+    <p>The compiler scans all bytecode before execution. When it finds two instructions with identical function signatures and identical input linkages — same operation, same sources, same dependencies — it deletes one and redirects all calls to the other. Both call sites now point to the same pool index. The duplicate never runs. It never existed at runtime.</p>
 
     <div class="compare">
       <div class="cblock bad">
-        <div class="cblock-title">Normal — full chain always executes</div>
-        <div class="code-line bad-code">addr 1 → compute (~300 cycles)</div>
-        <div class="code-line bad-code">addr 2 → compute (~300 cycles)</div>
-        <div class="code-line bad-code">addr 3 → compute (~300 cycles, already known)</div>
-        <div class="code-line bad-code">addr 4 → compute (~300 cycles)</div>
-        <div class="code-line bad-code">addr 5 → result — total: ~1500 cycles</div>
+        <div class="cblock-title">Normal — duplicate bytecode</div>
+        <div class="code-line bad-code">fn_gravity_apply(mass, vel) → addr 0x3F00</div>
+        <div class="code-line bad-code">fn_gravity_apply(mass, vel) → addr 0x4A10</div>
+        <div class="code-line bad-code">Both execute. Both cost. Both exist.</div>
+        <div class="code-line bad-code">4 pointers → 4 addresses → 4 pool entries</div>
       </div>
       <div class="cblock good">
-        <div class="cblock-title">PELTGC — chain compressed at known point</div>
-        <div class="code-line good-code">addr 1 → pool hit [route, ~4 cycles]</div>
-        <div class="code-line good-code">addr 2 → pool hit [route, ~4 cycles]</div>
-        <div class="code-line good-code">addr 3 → pool hit [route, ~4 cycles] ← merge point</div>
-        <div class="code-line good-code">addr 4 → compute (only genuinely new part)</div>
-        <div class="code-line good-code">addr 5 → result — total: ~312 cycles</div>
+        <div class="cblock-title">PELTGC — merged bytecode</div>
+        <div class="code-line good-code">fn_gravity_apply(mass, vel) → addr 0x3F00 [kept]</div>
+        <div class="code-line good-code">fn_gravity_apply(mass, vel) → deleted</div>
+        <div class="code-line good-code">All callers → redirected to [13]</div>
+        <div class="code-line good-code">4 pointers → 1 address → 1 pool entry</div>
       </div>
     </div>
 
-    <h3>Full or Partial</h3>
-    <p>If the entire chain's final result is already pooled — <strong>full merge.</strong> The whole sequence collapses to a single index lookup. If only a sub-result partway through is known — <strong>partial merge.</strong> The chain is cut at the known point, the known result is routed instantly, and only the remaining unknown steps execute.</p>
-
-    <div class="highlight">
-      <p>Every step in the chain still executes — but at cache speed instead of compute speed. A 10-step chain where steps 1-4 are pooled completes those four steps in ~16 cycles instead of ~1200. Only step 5 onwards costs full compute. The chain is not shortened by skipping — it is compressed by making known steps instant. <strong>The pool does not erase the questions. It answers them so fast they feel like they never happened.</strong></p>
-    </div>
+    <h3>Chain Speed Benefit</h3>
+    <p>A secondary benefit: when multiple call sites share one pool entry, that entry accumulates hits faster — crossing tier thresholds sooner, getting promoted to cache earlier, and becoming cheaper to route. Merging pointers doesn't just reduce count. It accelerates the learning of the tier system by concentrating usage onto fewer entries.</p>
 
     <div class="ptr-grid">
       <div class="ptr-section">
-        <div class="ptr-title bad">Normal — 4 duplicate pointers</div>
+        <div class="ptr-title bad">Normal — 4 separate bytecode entries</div>
         <div class="ptr-row"><span class="pname">ptr_A</span><span class="arrow">→</span><span class="addr da">0x3F00</span></div>
-        <div class="ptr-row"><span class="pname">ptr_B</span><span class="arrow">→</span><span class="addr da">0x3F00</span></div>
-        <div class="ptr-row"><span class="pname">ptr_C</span><span class="arrow">→</span><span class="addr da">0x3F00</span></div>
-        <div class="ptr-row"><span class="pname">ptr_D</span><span class="arrow">→</span><span class="addr da">0x3F00</span></div>
+        <div class="ptr-row"><span class="pname">ptr_B</span><span class="arrow">→</span><span class="addr da">0x4A10</span></div>
+        <div class="ptr-row"><span class="pname">ptr_C</span><span class="arrow">→</span><span class="addr da">0x5C20</span></div>
+        <div class="ptr-row"><span class="pname">ptr_D</span><span class="arrow">→</span><span class="addr da">0x6D30</span></div>
       </div>
       <div class="ptr-section">
-        <div class="ptr-title good">PELTGC — 1 entry, chain compressed</div>
+        <div class="ptr-title good">PELTGC — 1 entry, 4 references</div>
         <div class="ptr-row"><span class="pname">A, B, C, D</span><span class="arrow">→</span><span class="addr ma">[13]</span></div>
-        <div style="margin-top:16px; font-size:0.65em; color:var(--text-dim); line-height:1.7;">Pointer table stays tiny. Fits in cache. All 4 cost same as 1. Everything before the known result is gone.</div>
+        <div style="margin-top:16px; font-size:0.65em; color:var(--text-dim); line-height:1.7;">Identical function. Identical linking. One pool entry. Pointer table stays tiny. Fits in cache. All 4 cost same as 1.</div>
       </div>
     </div>
   </div>
@@ -989,33 +584,59 @@
       </div>
     </div>
 
-    <p>Not all calculations are equally likely. PELTGC organizes physics into tiers based on frequency of use. The system does not require manual configuration — it learns its own tier structure through observation and promotes calculations automatically.</p>
+    <p>Not all calculations are equally likely. PELTGC organizes physics into tiers — but the prebaking is not blind. Before the first frame runs, the compiler reads the game's scripts and calculates exactly what will be needed at launch.</p>
+
+    <h3>Script-Aware Prebaking</h3>
+    <p>The compiler reads every script in the game before launch. It identifies which mathematical functions are actually used — sin, cos, tan, coordinate transforms, physics constants, and more. A simple game with no projectile arcs doesn't need trigonometric functions prebaked. A flight simulator needs all of them. The prebake is <strong>tailored to what the game actually does</strong>, not a generic set of assumptions.</p>
+
+    <div class="compare">
+      <div class="cblock bad">
+        <div class="cblock-title">Traditional — generic prebake</div>
+        <div class="code-line bad-code">Load gravity — always</div>
+        <div class="code-line bad-code">Load sin/cos/tan — always</div>
+        <div class="code-line bad-code">Load collision matrices — always</div>
+        <div class="code-line bad-code">Simple game pays full cost of complex engine</div>
+      </div>
+      <div class="cblock good">
+        <div class="cblock-title">PELTGC — script-read prebake</div>
+        <div class="code-line good-code">Read scripts → gravity used? Prebake it.</div>
+        <div class="code-line good-code">Read scripts → sin/cos used? Prebake them.</div>
+        <div class="code-line good-code">Read scripts → no trig? Don't touch it.</div>
+        <div class="code-line good-code">Every game pays only for what it needs.</div>
+      </div>
+    </div>
+
+    <h3>Intent-Based Pooling</h3>
+    <p>The compiler doesn't just look for exact repeated calculations. It looks for <strong>intent</strong>. If the calculation <code>4*4+1.5-1.005</code> appears once in a script, the compiler checks: does this calculation appear anywhere else in the codebase? Does any other script have the intent to produce this same result through a different path? If yes — it is pooled immediately, before it ever runs at runtime.</p>
+
+    <p>This means calculations can be theoretically prepooled even before they are encountered at runtime. The compiler has read the entire game. It knows every calculation that will ever be asked for. It pre-answers them all.</p>
+
+    <div class="highlight">
+      <p>Everything can theoretically be prepooled. The compiler has the entire script. The script contains every calculation the game will ever need. Given enough prebake time, a game could launch with its entire pool already warm — first frame at full speed, cold start eliminated entirely.</p>
+    </div>
 
     <div class="tiers">
       <div class="tier common">
         <div class="tier-lbl">COMMON</div>
-        <div class="tier-desc">Pre-baked at startup. Bounce, gravity, standard collisions. Always ready. Zero compute. Ever. These are known before the first frame runs.</div>
+        <div class="tier-desc">Pre-baked at startup from script analysis. Gravity, standard collisions, any math function the compiler found in the scripts. Always ready. Zero compute. Ever. Known before the first frame runs.</div>
         <div class="tier-tag">instant</div>
       </div>
       <div class="tier rare">
         <div class="tier-lbl">RARE</div>
-        <div class="tier-desc">Speculatively precalculated within a limited lookahead range. Computed once when first encountered. Stored immediately after.</div>
+        <div class="tier-desc">Calculations the compiler found but couldn't fully prebake — context-dependent results, values that depend on player state. Computed once when first encountered at runtime. Stored immediately.</div>
         <div class="tier-tag">once</div>
       </div>
       <div class="tier promoted">
         <div class="tier-lbl">PROMOTED</div>
-        <div class="tier-desc">A rare outcome that gets reused mid-execution. The system notices. It promotes the entry into the permanent pool automatically. No developer intervention. The runtime learns itself.</div>
-        <div class="tier-tag">forever</div>
+        <div class="tier-desc">Entries the system observes getting more use at runtime than the compiler expected. Not promoted by a threshold counter — the system just knows a calculation is appearing more frequently and moves it up. No developer intervention. The runtime learns itself.</div>
+        <div class="tier-tag">runtime learned</div>
       </div>
     </div>
 
-    <h3>Promotion Threshold</h3>
-    <p>A RARE entry is promoted to PROMOTED when it crosses a <strong>hit threshold</strong> — the number of times it has been routed from the pool rather than computed fresh. The threshold is not a fixed number. It is relative to session length. A short session promotes entries faster. A long session waits for more evidence before committing an entry to permanent status. The system calibrates what "frequently used" means based on how long the game has been running.</p>
-
     <h3>Demotion</h3>
-    <p>Promotion is not permanent. A PROMOTED entry that stops being used — because the player moved to a different area, or a game phase ended — will accumulate cold time. If it goes unrouted long enough relative to its original hit rate, it demotes back to RARE. If it continues to go unused, it eventually goes dormant. The tier system is always live. It never freezes into a configuration that no longer reflects reality.</p>
+    <p>Promotion is not permanent. A PROMOTED entry that stops being used accumulates cold time. If it goes unrouted long enough relative to its observed frequency, it demotes back to RARE and eventually dormant. The tier system is always live. It never freezes into a configuration that no longer reflects reality.</p>
 
-    <div class="note">The tier system means the pool is not just a flat list of equal entries. It is a living priority structure that reflects exactly what this game, on this machine, for this player, needs most right now. It is different for every session. It is always correct.</div>
+    <div class="note">The tier system means the pool is not just a flat list of equal entries. It is a living priority structure that reflects exactly what this game, on this machine, for this player, needs most right now. It is different for every game, every session, every player. It is always correct.</div>
 
   </div>
 
@@ -1336,43 +957,76 @@
       </div>
     </div>
 
-    <p>If the pool state did not change between frames, the rendered output would be identical. Rendering it again is pure waste. But NDF does not just check pool state after the fact — the Script Queue tells it what is coming <strong>before the frame is even due.</strong></p>
+    <p>NDF does not skip frames by checking if objects moved. It skips frames by checking if the <strong>screen itself changed.</strong> The pixel is the atomic unit. Triangles, vertices, lighting — all of these are inputs that feed into the pixel. The pixel chunk is the final verdict.</p>
 
-    <p>If no scripts touching the scene state are in the queue, NDF knows with certainty the next frame will be identical. The GPU is told to skip before the frame cycle even begins. Not reactive — <strong>preventive.</strong></p>
+    <div class="quote">The GPU's job is to produce pixels. If the pixels haven't changed, the GPU has no job. NDF makes that determination before the GPU is ever asked.</div>
 
-    <div class="ndf">
-      <div class="nrow"><div class="nframe changed">frame 1</div><div class="narr">→</div><div class="nres render">queue has scene-changing scripts — render</div></div>
-      <div class="nrow"><div class="nframe same">frame 2</div><div class="narr">→</div><div class="nres skip">queue empty of scene scripts — skip before GPU is asked</div></div>
-      <div class="nrow"><div class="nframe same">frame 3</div><div class="narr">→</div><div class="nres skip">queue still empty — skip</div></div>
-      <div class="nrow"><div class="nframe changed">frame 4</div><div class="narr">→</div><div class="nres render">queue sees camera movement script — render only changed</div></div>
-      <div class="nrow"><div class="nframe same">frame 5</div><div class="narr">→</div><div class="nres skip">queue empty again — skip</div></div>
+    <h3>The 4×4 Grid</h3>
+    <p>Every frame is divided into a grid of 4×4 pixel regions. NDF evaluates each region independently. For each chunk it checks four things:</p>
+
+    <div class="tiers">
+      <div class="tier common">
+        <div class="tier-lbl">HUE</div>
+        <div class="tier-desc">Did the color tone of this region shift? A sunset changing from orange to red triggers this. A static wall does not. Digit trimming collapses imperceptible hue shifts to the same value automatically.</div>
+        <div class="tier-tag">color tone</div>
+      </div>
+      <div class="tier common">
+        <div class="tier-lbl">BRIGHTNESS</div>
+        <div class="tier-desc">Did the lighting on this region change? A torch flickering, a shadow moving, a day/night cycle advancing — all brightness checks. Static indoor lighting never triggers this.</div>
+        <div class="tier-tag">lighting</div>
+      </div>
+      <div class="tier rare">
+        <div class="tier-lbl">COLOR DATA</div>
+        <div class="tier-desc">Full RGB value check. The complete color fingerprint of the region. If hue and brightness passed but a texture detail changed — this catches it. The most precise of the four checks.</div>
+        <div class="tier-tag">full RGB</div>
+      </div>
+      <div class="tier promoted">
+        <div class="tier-lbl">GEOMETRY</div>
+        <div class="tier-desc">Did any triangle or vertex that projects into this region move? A vertex moving in world space only matters if its projection falls inside this chunk. Movement outside the chunk is invisible to it.</div>
+        <div class="tier-tag">projection</div>
+      </div>
     </div>
 
-    <div class="highlight" style="margin-top:20px;">
-      <p><strong>Static scene = infinite FPS.</strong> Not because the GPU is running faster — because it is not running at all. GPU load becomes proportional to actual scene complexity, not to frame rate. A menu screen, a cutscene, a slow moment in gameplay — effectively zero GPU cost.</p>
-    </div>
+    <p>All four checks happen per chunk. If all four are unchanged — that chunk is held from the previous frame at zero GPU cost. If any one changes — only that chunk is redrawn. Not the whole frame. Not the whole object. <strong>Just the chunks that actually changed.</strong></p>
 
-    <div class="note">NDF was not a design target. It emerged naturally from the pool architecture. Once pool state is the source of truth for all rendering, and the queue sees what is coming before it arrives, skipping identical frames becomes the automatic default — not an optimization pass.</div>
+    <h3>Why Pixels Are the Foundation</h3>
+    <p>Triangle and vertex data do not directly decide if a frame re-renders. They are inputs into the pixel check. A tree's vertices moving in world space only matters if those vertices project into a chunk where the color data, hue, or brightness also shifted enough to cross the digit trimming threshold. If the movement is imperceptible in the final pixel output — NDF treats the frame as identical.</p>
 
-    <h3>Partial Frame Updates</h3>
-    <p>NDF does not only skip entire frames. When something changes, it skips everything that <strong>did not</strong> change. The pool knows exactly which indices changed between frames — only those entries trigger a redraw. A player moving in a static environment re-renders only the player and their shadow. The background, the sky, the static geometry — untouched. The GPU renders only what reality changed, nothing more.</p>
+    <p>This means NDF's bar for "identical frame" is <strong>human perception</strong>, not mathematical equality. Two frames whose pixel chunks all fall within digit trimming thresholds are identical to NDF, even if the raw geometry values differ slightly. The system renders what humans can see — nothing more.</p>
 
     <div class="compare">
       <div class="cblock bad">
-        <div class="cblock-title">Traditional — full frame always</div>
-        <div class="code-line bad-code">Player moved 2 pixels</div>
-        <div class="code-line bad-code">Re-render entire 4K frame</div>
-        <div class="code-line bad-code">Sky, ground, buildings — all redrawn</div>
-        <div class="code-line bad-code">GPU at 100% for 2 pixels of change</div>
+        <div class="cblock-title">Traditional — object-based decisions</div>
+        <div class="code-line bad-code">Object moved? Re-render entire frame.</div>
+        <div class="code-line bad-code">Light changed? Re-render everything lit.</div>
+        <div class="code-line bad-code">Particle effect? Full pass every frame.</div>
+        <div class="code-line bad-code">GPU workload = scene complexity</div>
       </div>
       <div class="cblock good">
-        <div class="cblock-title">PELTGC NDF — only what changed</div>
-        <div class="code-line good-code">Player moved 2 pixels</div>
-        <div class="code-line good-code">Pool shows: 3 indices changed</div>
-        <div class="code-line good-code">Re-render: player sprite + shadow + footstep</div>
-        <div class="code-line good-code">GPU at ~1% for exactly what changed</div>
+        <div class="cblock-title">PELTGC NDF — chunk-based decisions</div>
+        <div class="code-line good-code">Check 4×4 chunks: hue, brightness, color, geometry</div>
+        <div class="code-line good-code">3 chunks changed? Redraw 3 chunks only.</div>
+        <div class="code-line good-code">Particle effect off-screen? Zero chunks changed.</div>
+        <div class="code-line good-code">GPU workload = what visually changed on screen</div>
       </div>
     </div>
+
+    <h3>Queue Integration</h3>
+    <p>The Script Queue tells NDF what is coming before the frame is due. If no scripts touching visible objects are in the queue, NDF skips the chunk checks entirely — the answer is already known. If scripts are queued that affect specific regions, NDF pre-marks those chunks for evaluation and ignores the rest. The check is not reactive. It is <strong>targeted before it begins.</strong></p>
+
+    <div class="ndf">
+      <div class="nrow"><div class="nframe changed">frame 1</div><div class="narr">→</div><div class="nres render">queue has scripts → check chunks → 12 changed → redraw 12</div></div>
+      <div class="nrow"><div class="nframe same">frame 2</div><div class="narr">→</div><div class="nres skip">queue empty → all chunks identical → skip entirely</div></div>
+      <div class="nrow"><div class="nframe same">frame 3</div><div class="narr">→</div><div class="nres skip">queue empty → skip</div></div>
+      <div class="nrow"><div class="nframe changed">frame 4</div><div class="narr">→</div><div class="nres render">player moved → 4 chunks changed → redraw 4 only</div></div>
+      <div class="nrow"><div class="nframe same">frame 5</div><div class="narr">→</div><div class="nres skip">queue empty → skip</div></div>
+    </div>
+
+    <div class="highlight" style="margin-top:20px;">
+      <p><strong>GPU workload becomes proportional to visible change — not to scene complexity, not to frame rate, not to polygon count.</strong> A menu screen with no movement costs 0% GPU. A cutscene with a slow camera pan costs almost nothing. Active combat costs exactly as much as the number of screen chunks that actually changed. Nothing more. Ever.</p>
+    </div>
+
+    <div class="note">NDF was not a design target. It emerged naturally from the pool architecture. Once pixel chunks are the atomic rendering unit and the queue sees what is coming before it arrives, skipping unchanged regions becomes the automatic default — not an optimization pass. The feature aimed itself at the correct level of granularity.</div>
   </div>
 
 <div class="divider"></div>
@@ -1625,6 +1279,57 @@
 
     <h3>Anti-Cheat by Architecture</h3>
     <p>Pool indices are randomized per session per machine. No consistent addresses. The pool map lives in the compiler and ships without labels. A disassembler sees only: 1 2 3 4 5 6 7 8. There is nothing to target because the target changes every run.</p>
+
+    <h3>Future-Seen Physics — Zero Latency Movement</h3>
+    <p>This is the deepest consequence of combining deterministic physics, a shared pool, and a script queue that reads ahead. The server does not react to where a character <em>was</em> when a packet left the client. It calculates where the character <em>will be</em> when the packet arrives.</p>
+
+    <p>Physics are deterministic. Packet travel time is known. The script queue reads the physics scripts and runs the simulation forward in time. By the time the packet arrives, both client and server have already independently calculated the exact same position. The packet is not a correction. It is a confirmation of what both sides already knew.</p>
+
+    <div class="compare">
+      <div class="cblock bad">
+        <div class="cblock-title">Traditional — reactive model</div>
+        <div class="code-line bad-code">Client moves → sends packet</div>
+        <div class="code-line bad-code">Packet travels Xms</div>
+        <div class="code-line bad-code">Server receives → processes → responds</div>
+        <div class="code-line bad-code">Client waits → corrects → rubber-bands</div>
+      </div>
+      <div class="cblock good">
+        <div class="cblock-title">PELTGC — future-seen model</div>
+        <div class="code-line good-code">Client moves → queue reads physics scripts</div>
+        <div class="code-line good-code">Server calculates position at T+Xms — certain</div>
+        <div class="code-line good-code">Packet arrives → state already matches</div>
+        <div class="code-line good-code">Zero correction. Zero rubber-band. Zero delay.</div>
+      </div>
+    </div>
+
+    <p>This eliminates entire categories of problems that multiplayer networking currently patches around with increasingly complex workarounds:</p>
+
+    <div class="tiers">
+      <div class="tier common">
+        <div class="tier-lbl">RUBBER-BAND</div>
+        <div class="tier-desc">Eliminated. Positions never desync because both sides calculated the same state before the packet arrived. There is nothing to snap back to.</div>
+        <div class="tier-tag">gone</div>
+      </div>
+      <div class="tier common">
+        <div class="tier-lbl">LAG COMP</div>
+        <div class="tier-desc">Eliminated. Lag compensation exists to rewind time and ask "where was this player when the shot fired?" PELTGC never needs to rewind — both sides already agreed on the future state.</div>
+        <div class="tier-tag">gone</div>
+      </div>
+      <div class="tier common">
+        <div class="tier-lbl">ROLLBACK</div>
+        <div class="tier-desc">Eliminated. Rollback netcode exists because predictions are wrong. PELTGC does not predict — it calculates with certainty from deterministic physics. Nothing to roll back.</div>
+        <div class="tier-tag">gone</div>
+      </div>
+      <div class="tier common">
+        <div class="tier-lbl">INPUT DELAY</div>
+        <div class="tier-desc">Eliminated. The client moves immediately. The server already expected that movement. The intentional queue delay is smaller than a single frame. The player feels nothing.</div>
+        <div class="tier-tag">gone</div>
+      </div>
+    </div>
+
+    <div class="highlight">
+      <p>Every multiplayer game today spends enormous engineering effort on rubber-banding fixes, lag compensation systems, rollback implementations, and input delay tuning. All of that engineering exists because servers react to packets. <strong>PELTGC servers read ahead of packets.</strong> The problem class disappears at the architecture level — not patched, not compensated, not hidden. Gone.</p>
+    </div>
   </div>
 
 <div class="divider"></div>
