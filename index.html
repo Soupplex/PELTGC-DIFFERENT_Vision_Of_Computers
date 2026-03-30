@@ -345,15 +345,17 @@ p strong { color: var(--text); font-weight: 600; }
       </div>
     </div>
 
-    <p>PELTGC began with a single question: <strong>why does a garbage collector exist?</strong> The answer — because programs create and destroy the same things repeatedly — reveals the real problem. The GC is not the solution. It is a janitor cleaning up a mess that should never have been made.</p>
+    <p>why does a garbage collector exist. seriously. think about it. programs create the same things, destroy them, then create them again. the GC is just cleaning up a mess that shouldnt exist in the first place. its a janitor for a problem you caused yourself.</p>
 
-    <p>The alternative is simple: <strong>stop throwing things away.</strong> Pool everything. Assign every calculation, instruction, result, and state an index. When the same thing is needed again — return the index. Never recompute. Never reallocate. Never collect.</p>
+    <p>so i thought — what if you just NEVER throw it away. pool everything. every calculation, every result, every state gets an index. next time you need it, return the index. done. no recompute. no reallocate. no collect. ever.</p>
+
+    <p>thats it. thats the whole thing. everything else in this doc is just that one idea applied everywhere.</p>
 
     <div class="highlight">
-      <p>PELTGC is not a memory optimization. It is a runtime philosophy that applies uniformly to computation, rendering, networking, threading, physics, video decoding, and execution itself. The pool is not a feature. It is the foundation.</p>
+      <p>PELTGC isnt a memory optimization. its not a GC replacement. its a different way of thinking about computation entirely. the pool isnt a feature you turn on. its the foundation everything runs on.</p>
     </div>
 
-    <div class="quote">Pooling is the GC. PELT-GC. A garbage collection technique where the technique is — never garbage collect.</div>
+    <div class="quote">Pooling is the GC. PELT-GC. the garbage collection technique where the technique is — never garbage collect.</div>
   </div>
 
 <div class="divider"></div>
@@ -368,7 +370,7 @@ p strong { color: var(--text); font-weight: 600; }
       </div>
     </div>
 
-    <p>One contiguous block of memory. All calculations from all domains live here, indexed by number. Math, physics, video, encoding, pointers, vertices — all share the same pool. The index is the identity.</p>
+    <p>one block of memory. everything lives here. math, physics, video, pointers, vertices — same pool. the index is the identity. thats it.</p>
 
     <div class="pool-box">
       <div class="pool-box-label">GLOBAL POOL — one contiguous block</div>
@@ -413,19 +415,19 @@ p strong { color: var(--text); font-weight: 600; }
     </div>
 
     <h3>What ART and Lazy Mean</h3>
-    <p><strong>ART</strong> (At Runtime) is smarter than traditional JIT. JIT compiles only when something is first encountered at runtime — it has no awareness of what's coming. ART does two things: it <strong>precompiles at the beginning</strong> from script analysis before the first frame runs, and it compiles at runtime for anything the prebake didn't catch. The prebake handles everything the compiler could see in advance. ART handles everything else the moment it arrives. Between the two — almost nothing is ever compiled cold.</p>
-    <p><strong>Lazy</strong> means the entry exists in the pool structure but has not been computed yet — it is reserved and indexed, but its value is still pending. The Script Queue has already seen it coming and assigned it a slot. When the calculation actually arrives, the slot is already waiting. No allocation needed. Just fill and go.</p>
-    <p><strong>Merged</strong> means multiple pointers were collapsed into one entry. See Chapter 05.</p>
+    <p><strong>ART</strong> — At Runtime. smarter than JIT. JIT only compiles when it sees something for the first time at runtime. ART does two things — it prebakes at the start from reading the scripts, AND compiles at runtime for anything it missed. so almost nothing is ever cold. JIT is reactive. ART is proactive AND reactive.</p>
+    <p><strong>Lazy</strong> — the slot exists, the index is assigned, but the value isnt there yet. the queue already saw it coming and reserved the spot. when it arrives — slot is waiting. just fill and go.</p>
+    <p><strong>Merged</strong> — multiple pointers collapsed to one entry. chapter 05.</p>
 
     <h3>How Indices Get Assigned</h3>
-    <p>Indices are assigned in order of first encounter — sequential, per session. The first calculation the pool sees becomes [1]. The second becomes [2]. The Script Queue pre-reserves indices for calculations it has seen coming before they arrive, so by the time a lazy entry is computed, its index was already decided. The pool never renumbers. An index is permanent for the lifetime of the session.</p>
+    <p>sequential. first calculation the pool sees is [1]. second is [2]. the queue pre-reserves indices for calculations it already knows are coming — so lazy entries have their index before they arrive. the pool never renumbers. an index is permanent for the session. always.</p>
 
     <h3>Memory Regions and Deactivation</h3>
-    <p>The pool does not grow forever. Under memory pressure, cold regions <strong>deactivate</strong> — they stop consuming active memory but retain their index. When referenced again they reactivate instantly. The work is never lost. It rests.</p>
-    <p>This is not eviction. Eviction destroys and requires recomputation. Deactivation preserves and requires only a wake signal. The distinction matters: <strong>the pool never forgets, it only sleeps.</strong></p>
+    <p>under pressure, cold regions deactivate. they stop using active memory but keep their index. when needed again — instant reactivation. nothing lost. it just sleeps.</p>
+    <p>this is NOT eviction. eviction destroys the result, forces recompute. deactivation just pauses it. huge difference. <strong>the pool never forgets. it only sleeps.</strong></p>
 
     <div class="highlight">
-      <p>The pool as described here is the foundation. But the pool is more advanced than this. Pool regions can observe each other, compare themselves, and merge the best characteristics of both. The next chapter explains what the pool actually becomes over time.</p>
+      <p>this is the basic version. the pool is actually more advanced than this — regions observe each other, compare, merge the best parts of both. next chapter.</p>
     </div>
   </div>
 
@@ -441,11 +443,11 @@ p strong { color: var(--text); font-weight: 600; }
       </div>
     </div>
 
-    <p>Pools are not static. They evolve. When two pool regions handle nearly identical functions — same intent, slightly different implementation or values — the system notices. It evaluates both, takes the best performing characteristics of each, and collapses them into a single superior entry that outperforms both parents.</p>
+    <p>pools dont just sit there. they evolve. two pool regions doing almost the same thing — the system notices. it takes the best parts of both and collapses them into one entry that outperforms either. the weak version dies. the better version survives. automatically. no dev involvement.</p>
 
-    <div class="quote">In evolution games, AI passes the best genes to the next generation. The weak dies. The strong survives and improves. PELTGC pools do exactly this — automatically, continuously, without any developer input.</div>
+    <div class="quote">you know evolution games where the AI passes the best genes to the next generation. the weak dies, the strong survives, the next gen is better. thats literally what pools do here.</div>
 
-    <h3>The Genetic Analogy is Precise</h3>
+    <h3>its not just an analogy</h3>
 
     <div class="tiers">
       <div class="tier common">
@@ -470,8 +472,8 @@ p strong { color: var(--text); font-weight: 600; }
       </div>
     </div>
 
-    <h3>What This Means for RAM</h3>
-    <p>The state space explosion argument — that the pool would fill 32GB with unique states — collapses against pool evolution. The pool doesn't accumulate toward infinity. It <strong>condenses toward a minimum.</strong> Near-identical entries merge. Weak entries die. Redundancy collapses. The pool converges on the smallest possible representation of everything the game actually needs.</p>
+    <h3>what this does to RAM</h3>
+    <p>someone said the pool would fill 32GB with unique states. no. because the pool isnt accumulating — its condensing. near-identical entries merge. weak entries die. redundancy collapses. it converges toward the smallest possible representation of what the game actually needs. it gets smaller AND better at the same time. no other caching system does that.</p>
 
     <div class="compare">
       <div class="cblock bad">
@@ -490,11 +492,11 @@ p strong { color: var(--text); font-weight: 600; }
       </div>
     </div>
 
-    <h3>Propagation Through the Hierarchy</h3>
-    <p>The best performing session pool entries are candidates for promotion into the game pool. The best game pool entries can propagate upward to the OS pool. The strongest calculations rise through the hierarchy like dominant traits spreading through generations. An insight learned in one session can eventually become a universal constant shared across every application on the machine.</p>
+    <h3>propagation up the hierarchy</h3>
+    <p>best session pool entries get promoted to the game pool. best game pool entries propagate up to the OS pool. one insight from one session can eventually become a universal constant shared across every app on the machine. good calculations rise. thats it.</p>
 
     <div class="highlight">
-      <p>A game played for 100 sessions doesn't have a pool 100x larger than session 1. It has a pool that may be <strong>smaller</strong> than session 10 — but dramatically more capable. The pool breathes: expanding when it encounters genuinely new things, contracting when it discovers they were the same thing in disguise. It is the only caching system that gets better and smaller at the same time.</p>
+      <p>session 100 has a <strong>smaller</strong> pool than session 10. not a bigger one. because everything that was the same thing got collapsed. everything useless died. what remains is exactly what matters. nothing else.</p>
     </div>
   </div>
 
@@ -510,9 +512,9 @@ p strong { color: var(--text); font-weight: 600; }
       </div>
     </div>
 
-    <p>The same calculation performed twice is waste. PELTGC makes the second occurrence <strong>structurally impossible</strong> — not caught after the fact, but prevented at the architecture level. Once pooled, a calculation becomes a free index lookup forever.</p>
+    <p>doing the same calculation twice is just stupidity. PELTGC makes the second occurrence <strong>structurally impossible</strong>. not caught after — prevented. once its pooled, its free forever.</p>
 
-    <p>Deduplication does not happen as a separate process running on top of the pool. <strong>The pool is the deduplication.</strong> Pools are memory regions. Every calculation result lives in a region, indexed by number. When a thread needs a calculation — it looks up the region. If the result is there, nothing runs. The region answered the question by existing.</p>
+    <p>and heres the thing — deduplication isnt a separate process. <strong>the pool IS the deduplication.</strong> pools are memory regions. result lives in the region. thread looks up the region. if its there — nothing runs. the region answered the question by existing. thats the whole mechanism.</p>
 
     <div class="compare">
       <div class="cblock bad">
@@ -533,8 +535,8 @@ p strong { color: var(--text); font-weight: 600; }
       </div>
     </div>
 
-    <h3>Parallel Lookup</h3>
-    <p>Because pools are independent memory regions — not a single locked structure — multiple threads can look up different regions simultaneously with no contention. Thread 1 reads region [4]. Thread 2 reads region [17]. Thread 3 reads region [42]. All three happen at the same time. No thread waits for another. No lock. No mutex. The regions are just memory — reading memory is always parallel.</p>
+    <h3>parallel lookup</h3>
+    <p>pools are independent memory regions. not one locked structure. so thread 1 reads region [4], thread 2 reads [17], thread 3 reads [42] — all at the same time. nobody waits. no lock. no mutex. reading memory is always parallel. thats just how memory works.</p>
 
     <div class="compare">
       <div class="cblock bad">
@@ -553,7 +555,7 @@ p strong { color: var(--text); font-weight: 600; }
       </div>
     </div>
 
-    <p><strong>ART</strong> — At Runtime — covers the full compilation lifecycle. What the compiler could see in the scripts gets prebaked before the first frame. What it couldn't predict gets compiled at the moment it first arrives at runtime and immediately placed into a pool region. Between prebake and ART, almost nothing is ever cold. The pool stores <strong>perceived reality</strong>, not raw reality. How it handles values that are close but not identical is covered in the next chapter — Digit Trimming.</p>
+    <p><strong>ART</strong> — At Runtime. prebakes what the compiler found in the scripts. compiles everything else the moment it first arrives. between the two — almost nothing is ever cold. the pool stores <strong>perceived reality</strong>, not raw values. close but not identical is handled next chapter.</p>
   </div>
 
 <div class="divider"></div>
@@ -568,7 +570,7 @@ p strong { color: var(--text); font-weight: 600; }
       </div>
     </div>
 
-    <p>The pool stores perceived reality, not raw reality. But how does it decide when two values are close enough to match? Not through a manually configured threshold. Through <strong>digit trimming</strong> — the pool keeps removing trailing digits from both values until they converge on a match that already exists.</p>
+    <p>two values that look different might be the same thing. how does the pool figure that out? not with a manually configured threshold — thats stupid, every domain needs a different one. instead: <strong>digit trimming</strong>. keep removing trailing digits from both values until they hit a match that already exists in the pool.</p>
 
     <div class="quote">If someone asks what 2.0000001 and 2.0000002 are, they are both just 2. The pool figures that out by itself.</div>
 
@@ -589,10 +591,10 @@ p strong { color: var(--text); font-weight: 600; }
       </div>
     </div>
 
-    <p>The algorithm needs no context, no configuration, no domain knowledge. It trims until the pool itself confirms a match. The pool defines the threshold <strong>by what it already contains</strong>. Self-calibrating. Zero developer input required.</p>
+    <p>no context needed. no config. no domain knowledge. trim until the pool confirms a match. the pool defines its own threshold <strong>by what it already contains</strong>. self-calibrating. zero dev input. ever.</p>
 
-    <h3>Nudging — The Harmless Adjustment</h3>
-    <p>Sometimes trimming isn't even necessary. If two values are imperceptibly close, the pool tries nudging the incoming value in both directions — up and down — to see if either matches an existing entry. Whichever direction closes the gap to a pool entry with the least perceivable difference is chosen. If neither direction causes a perceivable change, the nudge happens and the values collapse into one entry.</p>
+    <h3>nudging</h3>
+    <p>sometimes you dont even need to trim. if two values are close enough, the pool tries nudging the incoming value up AND down — whichever direction hits an existing entry with the smallest perceivable change. if neither direction changes anything you'd notice — nudge happens, values collapse to one. done.</p>
 
     <div class="compare">
       <div class="cblock bad">
@@ -612,7 +614,7 @@ p strong { color: var(--text); font-weight: 600; }
     </div>
 
     <div class="highlight">
-      <p>Digit trimming and nudging work together. Trimming finds matches by reducing precision. Nudging finds matches by trying the closest step in either direction. Both serve the same goal: collapse what is imperceptibly different into what is already known. The direction chosen is always whichever causes the least perceivable change. The threshold is always human perception.</p>
+      <p>trimming reduces precision to find a match. nudging steps in either direction to find a match. same goal — collapse what you cant perceive into what you already know. threshold is always human perception. not math. not config. humans.</p>
     </div>
   </div>
 
@@ -628,12 +630,12 @@ p strong { color: var(--text); font-weight: 600; }
       </div>
     </div>
 
-    <p>If two places in the bytecode perform the exact same function with the same linking — they are not two instructions. They are one instruction referenced twice. PELTGC deletes the duplicate and links both call sites to the single surviving copy. The bytecode shrinks. The pool entry count stays correct. Nothing is lost.</p>
+    <p>two bytecode instructions doing the exact same thing with the same linking? thats not two instructions. thats one instruction written twice. PELTGC deletes the copy. both call sites point to the surviving one. bytecode shrinks. nothing is lost.</p>
 
-    <div class="quote">Two identical sentences in a book don't need to be printed twice. Print it once. Reference it twice. The meaning is identical. The space is saved.</div>
+    <div class="quote">two identical sentences in a book dont need printing twice. print once. reference twice. same meaning. half the space.</div>
 
-    <h3>Same Function. Same Linking. One Entry.</h3>
-    <p>The compiler scans all bytecode before execution. When it finds two instructions with identical function signatures and identical input linkages — same operation, same sources, same dependencies — it deletes one and redirects all calls to the other. Both call sites now point to the same pool index. The duplicate never runs. It never existed at runtime.</p>
+    <h3>same function. same linking. one entry.</h3>
+    <p>compiler scans all bytecode before execution. finds two instructions — identical signature, identical inputs, identical dependencies. deletes one. redirects everything to the survivor. the duplicate never runs. at runtime it never existed.</p>
 
     <div class="compare">
       <div class="cblock bad">
@@ -652,8 +654,8 @@ p strong { color: var(--text); font-weight: 600; }
       </div>
     </div>
 
-    <h3>Chain Speed Benefit</h3>
-    <p>A secondary benefit: when multiple call sites share one pool entry, that entry accumulates hits faster — crossing tier thresholds sooner, getting promoted to cache earlier, and becoming cheaper to route. Merging pointers doesn't just reduce count. It accelerates the learning of the tier system by concentrating usage onto fewer entries.</p>
+    <h3>speed bonus</h3>
+    <p>when multiple call sites share one pool entry — that entry accumulates hits faster. crosses tier thresholds sooner. gets promoted to cache earlier. merging doesnt just reduce count. it accelerates learning by concentrating usage.</p>
 
     <div class="ptr-grid">
       <div class="ptr-section">
@@ -683,10 +685,10 @@ p strong { color: var(--text); font-weight: 600; }
       </div>
     </div>
 
-    <p>Not all calculations are equally likely. PELTGC organizes physics into tiers — but the prebaking is not blind. Before the first frame runs, the compiler reads the game's scripts and calculates exactly what will be needed at launch.</p>
+    <p>not all calculations are equal. and the prebake isnt blind — it reads the actual game scripts before launch and figures out what will actually be needed.</p>
 
-    <h3>Script-Aware Prebaking</h3>
-    <p>The compiler reads every script in the game before launch. It identifies which mathematical functions are actually used — sin, cos, tan, coordinate transforms, physics constants, and more. A simple game with no projectile arcs doesn't need trigonometric functions prebaked. A flight simulator needs all of them. The prebake is <strong>tailored to what the game actually does</strong>, not a generic set of assumptions.</p>
+    <h3>script-aware prebaking</h3>
+    <p>compiler reads every script before launch. identifies which math functions are actually used — sin, cos, tan, coordinates, physics constants, whatever. simple game with no arcs doesnt need trig prebaked. flight sim needs all of it. the prebake is <strong>tailored to what the game actually does</strong>. not a generic assumption about what games need. your game. your scripts.</p>
 
     <div class="compare">
       <div class="cblock bad">
@@ -705,10 +707,10 @@ p strong { color: var(--text); font-weight: 600; }
       </div>
     </div>
 
-    <h3>Intent-Based Pooling</h3>
-    <p>The compiler doesn't just look for exact repeated calculations. It looks for <strong>intent</strong>. If the calculation <code>4*4+1.5-1.005</code> appears once in a script, the compiler checks: does this calculation appear anywhere else in the codebase? Does any other script have the intent to produce this same result through a different path? If yes — it is pooled immediately, before it ever runs at runtime.</p>
+    <h3>intent-based pooling</h3>
+    <p>the compiler doesnt just look for exact repeated calculations. it looks for <strong>intent</strong>. <code>4*4+1.5-1.005</code> appears once — does it appear anywhere else? does any other script intend to produce the same result a different way? if yes — pooled immediately. before it even runs.</p>
 
-    <p>This means calculations can be theoretically prepooled even before they are encountered at runtime. The compiler has read the entire game. It knows every calculation that will ever be asked for. It pre-answers them all.</p>
+    <p>theoretically, everything can be prepooled. compiler read the entire game. it knows every calculation that will ever be asked for. it pre-answers them all. first frame could launch fully warm.</p>
 
     <div class="highlight">
       <p>Everything can theoretically be prepooled. The compiler has the entire script. The script contains every calculation the game will ever need. Given enough prebake time, a game could launch with its entire pool already warm — first frame at full speed, cold start eliminated entirely.</p>
@@ -733,9 +735,9 @@ p strong { color: var(--text); font-weight: 600; }
     </div>
 
     <h3>Demotion</h3>
-    <p>Promotion is not permanent. A PROMOTED entry that stops being used accumulates cold time. If it goes unrouted long enough relative to its observed frequency, it demotes back to RARE and eventually dormant. The tier system is always live. It never freezes into a configuration that no longer reflects reality.</p>
+    <p>promotion isnt permanent. entry stops getting used — accumulates cold time — demotes back to RARE. keeps going — goes dormant. the tier system is always live. it never freezes on a configuration that stopped being true.</p>
 
-    <div class="note">The tier system means the pool is not just a flat list of equal entries. It is a living priority structure that reflects exactly what this game, on this machine, for this player, needs most right now. It is different for every game, every session, every player. It is always correct.</div>
+    <div class="note">the pool isnt a flat list. its a living priority structure tuned to this game, this machine, this player, right now. different for every session. always correct.</div>
 
   </div>
 
@@ -751,13 +753,13 @@ p strong { color: var(--text); font-weight: 600; }
       </div>
     </div>
 
-    <p>First run, the pool is empty. Every calculation is computed normally. Nothing is cached. Some would call this a weakness. It is not — and it is warmer than it sounds.</p>
+    <p>first run — pool is empty. everything computes normally. people say thats a weakness. its not. and its warmer than it sounds.</p>
 
     <div class="quote">Cold start is like entering the classroom and seeing what's going on. You don't need a briefing. You walk in, observe, understand — and from that point you know everything.</div>
 
-    <p>Even on first run, the Script Queue is active. It is reading scripts, seeing certain outcomes, and pre-loading results <strong>within the same session</strong> as they become known. The pool fills itself as the game runs. By the middle of the first session it is already routing. By the end it is deeply warm.</p>
+    <p>even on first run the queue is active. reading scripts. seeing certain outcomes. pre-loading results <strong>within the same session</strong> as things happen. pool fills itself as you play. middle of session 1 — already routing. end of session 1 — deeply warm.</p>
 
-    <p>The cold start is not a blank slate. It is a <strong>live calibration.</strong> The queue watches every script execute, every thread run, every outcome resolve — and the pool absorbs all of it in real time. First session the pool learns. Every session after that it already knows.</p>
+    <p>cold start isnt a blank slate. its a <strong>live calibration.</strong> queue watches everything. pool absorbs everything. session 1 the pool learns. every session after — it already knows.</p>
 
     <div class="compare">
       <div class="cblock bad">
@@ -776,7 +778,7 @@ p strong { color: var(--text); font-weight: 600; }
       </div>
     </div>
 
-    <p>Other engines pre-optimize for an average case that fits nobody perfectly. PELTGC optimizes for the exact case in front of it. The cold start is not a cost. It is the calibration that makes all subsequent runs faster than any pre-configured alternative could ever be.</p>
+    <p>every other engine pre-optimizes for an average case that fits nobody perfectly. PELTGC optimizes for the exact case in front of it. cold start isnt a cost. its the only calibration that actually works.</p>
   </div>
 
 <div class="divider"></div>
@@ -791,7 +793,7 @@ p strong { color: var(--text); font-weight: 600; }
       </div>
     </div>
 
-    <p>PELTGC pools are not isolated. They form a hierarchy. Before checking its own pool, a game checks the OS-level pool. Common calculations — gravity, standard math, universal physics — are computed once across the entire machine, not once per game.</p>
+    <p>pools arent isolated. they form a hierarchy. before checking its own pool, a game checks the OS pool. gravity, standard math, universal physics — computed once across the whole machine. not once per game. once. period.</p>
 
     <div class="hierarchy">
       <div class="hlevel os">
@@ -812,14 +814,14 @@ p strong { color: var(--text); font-weight: 600; }
     </div>
 
     <h3>Machine Uniqueness</h3>
-    <p>Every pool is a fingerprint of the machine that built it. Floating point behavior, hardware timing, and truncation characteristics differ at the silicon level. A pool that is optimal on one CPU is meaningless on another. <strong>The machine is the pool.</strong> They are inseparable. Pool transfer is not a security hole — it is physically nonsensical.</p>
+    <p>every pool is a fingerprint of the machine that built it. floating point behavior, hardware timing, truncation — all different at the silicon level. a pool optimized for one CPU means nothing on another. <strong>the machine is the pool.</strong> inseparable. transferring pools isnt a security hole — its physically nonsensical.</p>
 
     <h3>Session Persistence</h3>
-    <p>The session pool can be persisted to disk between runs. On next launch, the player's personal pool loads before the first frame — the system already knows how this player plays before they press a button. The cold start effectively disappears after the first session. Everything the pool learned is waiting.</p>
-    <p>Persistence is opt-in per game. Some games benefit from a fresh session pool every run — competitive games where player behavior is intentionally unpredictable. Others benefit enormously from persistence — open world games where the same areas and physics patterns repeat across hundreds of hours.</p>
+    <p>session pool can persist to disk. next launch — personal pool loads before frame one. system already knows how you play before you press anything. cold start effectively gone after session 1. everything it learned is just waiting.</p>
+    <p>opt-in per game. competitive games might want a fresh pool every run — player behavior is supposed to be unpredictable. open world games benefit massively from persistence — same areas, same physics, hundreds of hours.</p>
 
     <h3>Fallback Behavior</h3>
-    <p>On a machine without OS pool support — older hardware, different OS — the game pool simply takes over the OS pool's responsibilities for universal constants. Gravity gets pooled in the game pool instead. Nothing breaks. The hierarchy collapses gracefully to a flat game pool. Performance is slightly lower than on full PELTGC hardware, but still dramatically better than a traditional engine because the game pool is still active.</p>
+    <p>no OS pool support? game pool takes over. gravity pools in the game pool instead. nothing breaks. hierarchy collapses to flat game pool. slightly less efficient than full PELTGC hardware — but still dramatically better than any traditional engine. the game pool is still running.</p>
 
   </div>
 
@@ -835,12 +837,12 @@ p strong { color: var(--text); font-weight: 600; }
       </div>
     </div>
 
-    <p>The Script Queue is not a task scheduler. It is the pool's ability to <strong>read the future with certainty</strong> — not by guessing, but by reading the scripts that have already decided what will happen.</p>
+    <p>the script queue is NOT a task scheduler. its the pool's ability to <strong>read the future with certainty</strong> — not predicting. reading. the code already decided what happens. the queue just sees it first.</p>
 
     <div class="quote">It is like reading a book and knowing what comes next. Not predicting. Reading. The logic is already written. The queue just sees it first.</div>
 
     <h3>Script Level — Certain Outcomes</h3>
-    <p>When a script executes, the queue reads its logic in full. If the script says:</p>
+    <p>when a script executes, the queue reads all of it. if the script says:</p>
 
     <div class="code-block good">
       <div class="code-tag">SCRIPT LOGIC</div>
@@ -848,7 +850,7 @@ p strong { color: var(--text); font-weight: 600; }
       &nbsp;&nbsp;<span class="val">player.die()</span>
     </div>
 
-    <p>The queue sees <code>enemy.attacking = true</code> and <code>player.shield = null</code>. It does not predict the player will die. It <strong>knows with 100% certainty</strong> because the code already decided it. Before the player hits the ground, the pool has already loaded the death animation, respawn logic, checkpoint data, and score update.</p>
+    <p>queue sees <code>enemy.attacking = true</code> and <code>player.shield = null</code>. it doesnt predict death. it <strong>knows with 100% certainty</strong> — the code already decided it. before the player hits the ground, pool has the death animation, respawn logic, checkpoint, score update. all of it. already there.</p>
 
     <div class="compare">
       <div class="cblock bad">
@@ -868,9 +870,9 @@ p strong { color: var(--text); font-weight: 600; }
     </div>
 
     <h3>Thread Level — Below the Scripts</h3>
-    <p>The queue operates below scripts too. Every thread's job is queued before it starts. The pool reads what each thread is about to do and pre-loads everything it will need. The thread shows up to work and <strong>everything is already waiting.</strong></p>
+    <p>it works below scripts too. every thread's job is queued before execution starts. pool reads what each thread will do. pre-loads everything it needs. thread shows up and <strong>everything is already waiting.</strong></p>
 
-    <p>The thread never asks for a calculation. The pool already knew the thread was coming.</p>
+    <p>the thread never asks. the pool already knew it was coming.</p>
 
     <div class="tiers">
       <div class="tier common">
@@ -891,7 +893,7 @@ p strong { color: var(--text); font-weight: 600; }
     </div>
 
     <h3>Two Layers. One Pool.</h3>
-    <p>Script level reads the plot. Thread level reads the author's notes before the book is printed. Both feed the same pool. Both give certainty, not guesses. The queue runs constantly ahead of reality — and reality just catches up to what the pool already prepared.</p>
+    <p>script level reads the plot. thread level reads the author's notes before the book exists. both feed the same pool. both give certainty. the queue is always ahead of reality — reality just catches up.</p>
 
     <div class="highlight">
       <p><strong>The queue is the pool's eyes. The pool is the queue's hands.</strong> Together they eliminate the concept of being unprepared. The pool is never caught off guard — either it already has the result, or the queue already saw it coming.</p>
@@ -910,12 +912,12 @@ p strong { color: var(--text); font-weight: 600; }
       </div>
     </div>
 
-    <p>Twelve students. One whiteboard. No one solves what's already been solved. No one asks a question that's already been answered. Everyone sees what everyone else has written. The pool is the whiteboard. Threads are the students.</p>
+    <p>twelve students. one whiteboard. nobody solves what's already solved. nobody asks a question already answered. everyone sees everything. pool is the whiteboard. threads are the students.</p>
 
-    <p>Because the pool is <strong>read-only for shared state</strong>, there are no race conditions. Reads never conflict. The synchronization overhead that kills most parallel systems — locks, mutexes, semaphores, wait states — simply does not exist.</p>
+    <p>pool is <strong>read-only for shared state</strong>. no race conditions. reads never conflict. locks, mutexes, semaphores, wait states — gone. all of it. just gone.</p>
 
     <h3>Collisions Don't Happen</h3>
-    <p>The old framing was: thread collision becomes a pipeline. The correct framing is: <strong>thread collisions never happen in the first place.</strong> Because every thread's job enters the Script Queue before execution begins, the queue sees what every thread is about to do and separates their work before they start. By the time a thread begins executing, its entire job has already been pre-loaded into the pool. There is nothing to collide over.</p>
+    <p>old framing: thread collision becomes a pipeline. correct framing: <strong>thread collisions never happen in the first place.</strong> every thread's job enters the queue before execution. queue sees everything, separates the work before anyone starts. by the time a thread runs — its entire job is pre-loaded. nothing to collide over.</p>
 
     <div class="sub">
       <div class="sub-label">Thread behavior — with Script Queue</div>
@@ -945,8 +947,8 @@ p strong { color: var(--text); font-weight: 600; }
     </div>
 
     <h3>The Whiteboard Principle</h3>
-    <p>All threads share one pool. They broadcast their results and read each other's results in real time. No thread ever solves something another thread already solved. No thread ever waits for information that's already in the pool.</p>
-    <p>Communication overhead disappears because the pool is always current. You do not ask your teammate what they computed. You look at the whiteboard. And by the time you look — it was already written there before you arrived.</p>
+    <p>all threads share one pool. results broadcast in real time. no thread solves what another already solved. no thread waits for something thats already there.</p>
+    <p>you dont ask your teammate what they computed. you look at the whiteboard. and by the time you look — it was written before you arrived.</p>
   </div>
 
 <div class="divider"></div>
@@ -961,7 +963,7 @@ p strong { color: var(--text); font-weight: 600; }
       </div>
     </div>
 
-    <p>One 32GB pool is a bottleneck. Sixteen 2GB pools are sixteen independent domains. Each core owns its slice. No locks. No contention. The same solution that handles pool size also handles parallelism — they are the same problem.</p>
+    <p>one 32GB pool is a bottleneck. sixteen 2GB pools are sixteen independent domains. each core owns its slice. no locks. no contention. the solution to pool size and the solution to parallelism are the same solution. same problem.</p>
 
     <div class="pgrid">
       <div class="pcell active"><span class="pcell-size">2GB</span>Pool 0<div class="pcell-core">Core 0</div></div>
@@ -975,9 +977,9 @@ p strong { color: var(--text); font-weight: 600; }
     </div>
 
     <h3>Cross-Pool Lookup</h3>
-    <p>Each core owns its slice — but what if Core 3 needs a result that Core 0 already computed? It does not recompute. It queries Core 0's pool directly via a <strong>shared index table</strong> — a lightweight read-only map that tells every core where every index lives. The result lives in Core 0's memory. Core 3 reads it. No duplication. No transfer. Just a pointer across the boundary.</p>
+    <p>each core owns its slice — but what if core 3 needs something core 0 already computed? it doesnt recompute. it checks the <strong>shared index table</strong> — lightweight read-only map of where every index lives. result is in core 0's memory. core 3 reads it. no duplication. no transfer. pointer across the boundary. done.</p>
 
-    <p>This is read-only by design. No core ever writes to another core's pool. The shared index table is append-only — cores add entries to it as they compute new results, but never modify or delete existing ones. Reads are free. Contention is impossible.</p>
+    <p>read-only by design. no core writes to another core's pool. index table is append-only. reads are free. contention is physically impossible.</p>
 
     <div class="compare">
       <div class="cblock bad">
@@ -1011,14 +1013,14 @@ p strong { color: var(--text); font-weight: 600; }
       </div>
     </div>
 
-    <p>Legacy systems suffer from the "All or Nothing" caching problem. If a CPU is asked to calculate a massive, complex equation and it doesn't have the <em>exact</em> final answer stored, it throws its hands up and recalculates the entire thing from scratch. It treats the equation like a locked black box.</p>
+    <p>legacy systems have an all-or-nothing problem. dont have the exact final answer? recalculate the entire thing from scratch. every time. the equation is a locked black box.</p>
 
-    <p>PELTGC does not see a black box. It sees <strong>Lego blocks</strong>.</p>
+    <p>PELTGC doesnt see a black box. it sees <strong>lego blocks</strong>.</p>
 
     <div class="quote">When you solve a math problem, you don't always start from zero. You recognize the tricks. You look at the intermediate steps, realize you've done half of it before, and jump to the end. The hardware should do the exact same thing.</div>
 
-    <h3>Compound Intent Resolution</h3>
-    <p>If the engine encounters a completely novel calculation—for example, a player jumping out of a moving vehicle into a windstorm—it breaks the calculation into sub-intents. The final combination may be brand new, but the individual forces are not.</p>
+    <h3>compound intent resolution</h3>
+    <p>novel calculation — player jumping out of a moving vehicle into a windstorm. final combination is new. individual forces are not. break it down. route what you know. only compute whats actually new.</p>
 
     <div class="compare">
       <div class="cblock bad">
@@ -1037,7 +1039,7 @@ p strong { color: var(--text); font-weight: 600; }
       </div>
     </div>
 
-    <p>With Fractional Routing, a "new" calculation is rarely new. It is simply a novel arrangement of already-pooled steps. The compiler recognizes the "half-pooled solutions" and dynamically jumps over the math it already knows. The execution pipeline never starts from zero.</p>
+    <p>a "new" calculation is rarely new. its a novel arrangement of already-pooled pieces. compiler finds the half-pooled solutions and skips over the math it already knows. execution never starts from zero.</p>
 
     <div class="highlight">
       <p><strong>This flattens the Cold Start curve.</strong> The more you play, the more "puzzle pieces" the pool collects. Even if the game generates a procedural, never-before-seen event, PELTGC solves it almost instantly by snapping together the pooled fragments of past events.</p>
@@ -1056,12 +1058,12 @@ p strong { color: var(--text); font-weight: 600; }
       </div>
     </div>
 
-    <p>NDF does not skip frames by checking if objects moved. It skips frames by checking if the <strong>screen itself changed.</strong> The pixel is the atomic unit. Triangles, vertices, lighting — all of these are inputs that feed into the pixel. The pixel chunk is the final verdict.</p>
+    <p>NDF doesnt check if objects moved. it checks if the <strong>screen itself changed.</strong> the pixel is the atomic unit. triangles, vertices, lighting — inputs that feed into the pixel. the pixel chunk is the final verdict.</p>
 
     <div class="quote">The GPU's job is to produce pixels. If the pixels haven't changed, the GPU has no job. NDF makes that determination before the GPU is ever asked.</div>
 
     <h3>The 4×4 Grid</h3>
-    <p>Every frame is divided into a grid of 4×4 pixel regions. NDF evaluates each region independently. For each chunk it checks four things:</p>
+    <p>every frame splits into a 4×4 grid of pixel regions. each region evaluated independently. four checks per chunk:</p>
 
     <div class="tiers">
       <div class="tier common">
@@ -1086,12 +1088,12 @@ p strong { color: var(--text); font-weight: 600; }
       </div>
     </div>
 
-    <p>All four checks happen per chunk. If all four are unchanged — that chunk is held from the previous frame at zero GPU cost. If any one changes — only that chunk is redrawn. Not the whole frame. Not the whole object. <strong>Just the chunks that actually changed.</strong></p>
+    <p>all four checks per chunk. all unchanged — held from previous frame. zero GPU cost. any one changes — only that chunk redraws. not the whole frame. not the whole object. <strong>just the chunks that changed.</strong></p>
 
     <h3>Why Pixels Are the Foundation</h3>
-    <p>Triangle and vertex data do not directly decide if a frame re-renders. They are inputs into the pixel check. A tree's vertices moving in world space only matters if those vertices project into a chunk where the color data, hue, or brightness also shifted enough to cross the digit trimming threshold. If the movement is imperceptible in the final pixel output — NDF treats the frame as identical.</p>
+    <p>triangles and vertices dont directly decide if a frame rerenders. they feed into the pixel check. a tree's vertices moving only matters if they project into a chunk where hue, brightness, or color also crossed the digit trimming threshold. imperceptible in the final pixel — NDF treats it as identical.</p>
 
-    <p>This means NDF's bar for "identical frame" is <strong>human perception</strong>, not mathematical equality. Two frames whose pixel chunks all fall within digit trimming thresholds are identical to NDF, even if the raw geometry values differ slightly. The system renders what humans can see — nothing more.</p>
+    <p>NDF's bar for "identical" is <strong>human perception</strong>. not math. if you cant see it, it didnt change. simple.</p>
 
     <div class="compare">
       <div class="cblock bad">
@@ -1111,7 +1113,7 @@ p strong { color: var(--text); font-weight: 600; }
     </div>
 
     <h3>Queue Integration</h3>
-    <p>The Script Queue tells NDF what is coming before the frame is due. If no scripts touching visible objects are in the queue, NDF skips the chunk checks entirely — the answer is already known. If scripts are queued that affect specific regions, NDF pre-marks those chunks for evaluation and ignores the rest. The check is not reactive. It is <strong>targeted before it begins.</strong></p>
+    <p>queue tells NDF whats coming before the frame is due. no scripts touching visible objects — skip chunk checks entirely, answer already known. scripts affecting specific regions — pre-mark those chunks, ignore the rest. not reactive. <strong>targeted before it begins.</strong></p>
 
     <div class="ndf">
       <div class="nrow"><div class="nframe changed">frame 1</div><div class="narr">→</div><div class="nres render">queue has scripts → check chunks → 12 changed → redraw 12</div></div>
@@ -1140,9 +1142,9 @@ p strong { color: var(--text); font-weight: 600; }
       </div>
     </div>
 
-    <p>Square pixels are a legacy artifact from the 1950s. They are physically flawed: the distance to a square's corner is longer than the distance to its side. This geometric failure creates jagged edges. To hide this, modern hardware burns massive amounts of compute power on Anti-Aliasing (blurring edges to fake a smooth line).</p>
+    <p>square pixels are from the 1950s. theyre physically wrong — corner distance is longer than side distance. jagged edges everywhere. to hide it, modern hardware burns enormous compute on anti-aliasing. blurring edges to fake what the geometry cant deliver.</p>
 
-    <p>Hexagons are equidistant. Every neighbor is exactly the same distance from the center. They form natural curves. The human retina is made of hexagonal photoreceptors, not a Cartesian grid of squares. So why do we use squares?</p>
+    <p>hexagons are equidistant. every neighbor exactly the same distance from center. natural curves. the human retina is literally made of hexagonal photoreceptors. not squares. hexagons. so why do we use squares?</p>
 
     <div class="quote">The industry uses squares because the math for hexagons is too heavy to calculate 60 times a second. PELTGC only calculates it once.</div>
 
@@ -1166,12 +1168,12 @@ p strong { color: var(--text); font-weight: 600; }
     </div>
 
     <h3>NDF Synergy</h3>
-    <p>Modern Anti-Aliasing techniques (like TAA) ruin static frames. They jitter the camera microscopically every frame to gather sub-pixel data, meaning the frame is <em>always</em> changing, even when nothing is moving. This breaks traditional caching.</p>
+    <p>TAA and modern AA techniques ruin static frames. they jitter the camera every single frame to gather sub-pixel data — meaning the frame is <em>always</em> changing even when nothing moves. breaks traditional caching. breaks NDF.</p>
     
-    <p>Because Hexagon Pixels eliminate the need for Anti-Aliasing entirely, the image doesn't need to jitter. The frame remains mathematically identical. This allows PELTGC's <strong>NDF (No Duplicate Frames)</strong> to step in flawlessly. A static hex-rendered scene consumes exactly 0.0% GPU power.</p>
+    <p>hex pixels eliminate AA entirely. no jitter needed. frame stays mathematically identical. NDF works perfectly. static hex scene — <strong>0.0% GPU.</strong> not close to zero. exactly zero.</p>
 
     <div class="highlight">
-      <p>Hexagonal displays have always been the dream of display engineers, bottlenecked by the processor's inability to do the complex math fast enough. PELTGC breaks the bottleneck. The math is routed, not computed. The perfect display finally has the perfect architecture to drive it.</p>
+      <p>hex displays were always the dream. bottlenecked by the processor's inability to do the math fast enough. PELTGC routes the math instead of computing it. the perfect display finally has the architecture to drive it.</p>
     </div>
   </div>
 
@@ -1187,15 +1189,15 @@ p strong { color: var(--text); font-weight: 600; }
       </div>
     </div>
 
-    <p>The GPU arms race is an expensive patch on a philosophy problem. Every generation adds more cores to process the same duplicate calculations faster. More VRAM to hold the same redundant data in more places. More power to push through unchanged frames at higher resolution.</p>
+    <p>the GPU arms race is just spending money on a philosophy problem. every generation — more cores to run the same duplicate calculations faster. more VRAM for the same redundant data. more power to push the same unchanged frames at higher resolution.</p>
 
-    <p>The bottleneck was never hardware. It was always: <strong>why are we doing this work twice.</strong></p>
+    <p>the bottleneck was never hardware. it was always: <strong>why are we doing this work twice.</strong></p>
 
-    <p>PELTGC applied at the GPU architecture level means the silicon itself has the pool baked in. Not software instructing the GPU to cache things — the hardware natively understands the concept of a pooled index. A shader that ran last frame with identical inputs does not execute. It returns the pooled result. Instantly.</p>
+    <p>PELTGC at the GPU level means the silicon itself has the pool baked in. not software telling the GPU to cache things — hardware that natively understands pool indices. shader ran last frame with identical inputs — doesnt execute. returns the pooled result. instantly.</p>
 
     <h3>What Changes at Silicon Level</h3>
-    <p>A traditional GPU core has: fetch unit, decode unit, ALU, write-back. Every operation goes through all four stages every time.</p>
-    <p>A PELTGC GPU core adds a <strong>pool lookup stage before fetch</strong>. Before an instruction is even fetched, the hardware checks the pool index table. Hit — skip fetch, decode, ALU entirely. Return the stored result directly. The ALU sits idle. Power drops to near zero for that core on that cycle. Miss — proceed through normal pipeline and pool the result on the way out.</p>
+    <p>traditional GPU core: fetch → decode → ALU → write. every operation. every time. no exceptions.</p>
+    <p>PELTGC GPU core adds <strong>pool lookup before fetch</strong>. hit — fetch, decode, ALU never wake up. result returned directly. ALU idles. power near zero. miss — normal pipeline, pool result on the way out.</p>
 
     <div class="compare">
       <div class="cblock bad">
@@ -1218,7 +1220,7 @@ p strong { color: var(--text); font-weight: 600; }
       <p>Duplicate draw calls — hardware-level deduplication. Identical vertices — one calculation shared across every core that needs it. Unchanged pixels — the silicon skips them without NDF telling it to. The GPU stops being a calculator that forgets everything between frames.</p>
     </div>
 
-    <p>The result: less power, less heat, less silicon, more performance. PELTGC GPU does not make expensive hardware faster. It makes cheap hardware capable. A kid who is lagging — stops lagging. The efficiency gain serves everyone at every price point, not just the top of the market.</p>
+    <p>less power. less heat. less silicon. more performance. doesnt make expensive hardware faster. makes cheap hardware capable. the kid whos lagging — stops lagging. serves every price point. not just the top.</p>
   </div>
 
 <div class="divider"></div>
@@ -1233,9 +1235,9 @@ p strong { color: var(--text); font-weight: 600; }
       </div>
     </div>
 
-    <p>H.264 pools pixel data — blocks of image that appear multiple times across frames. PELTGC goes two layers deeper: it pools the <strong>decode instructions themselves</strong>, and the Script Queue reads the video stream <strong>ahead of playback</strong> to pre-load them before the decoder ever asks.</p>
+    <p>H.264 pools pixel data. PELTGC goes two layers deeper — pools the <strong>decode instructions themselves</strong>. AND the queue reads the video stream <strong>ahead of playback</strong> and pre-loads before the decoder asks.</p>
 
-    <p>This means even the <strong>first occurrence</strong> of a block can arrive already decoded — because the queue saw it coming in the stream and loaded it in advance. Pooling handles repeats. The queue handles first encounters. Together they eliminate almost all decoding work.</p>
+    <p>so even the <strong>first occurrence</strong> of a block arrives already decoded. queue saw it coming. pooling handles repeats. queue handles first encounters. together — almost all decoding work is gone.</p>
 
     <div class="compare">
       <div class="cblock bad">
@@ -1284,12 +1286,12 @@ p strong { color: var(--text); font-weight: 600; }
       </div>
     </div>
 
-    <p>Sound is frequency. Frequency is a number. Numbers go in the pool. The entire audio engine follows naturally from the same philosophy as everything else — <strong>pool everything, reference when needed, never reproduce.</strong></p>
+    <p>sound is frequency. frequency is a number. numbers go in the pool. thats literally the whole audio engine. <strong>pool everything, reference when needed, never reproduce.</strong></p>
 
-    <p>If the same audio frequency appears twice anywhere in the game — same note in a song, same tone in a sound effect, same harmonic in an ambient track — it is one pool entry referenced twice. Not two sounds. One sound, two references.</p>
+    <p>same frequency anywhere in the game — music, sfx, ambient — one pool entry. not two sounds. one sound. two references.</p>
 
     <h3>Music is Repetition by Design</h3>
-    <p>A single note played 50 times in a song is one pool entry referenced 50 times. A chorus that repeats 8 times — same pool entries, 8 references. The harmonic structure of music is massively repetitive by nature. The pool exposes that and eliminates all of the redundancy automatically.</p>
+    <p>one note played 50 times — one pool entry referenced 50 times. chorus repeats 8 times — same entries, 8 references. music is repetition by design. pool exposes that and collapses all of it automatically.</p>
 
     <div class="compare">
       <div class="cblock bad">
@@ -1309,16 +1311,16 @@ p strong { color: var(--text); font-weight: 600; }
     </div>
 
     <h3>Cross-Context Frequency Sharing</h3>
-    <p>The pool does not care where a frequency was first encountered. A 440Hz tone in the menu music and a 440Hz component in a sword swing are the <strong>same pool entry.</strong> Background music, sound effects, UI sounds, ambient audio, voice lines — they all share one frequency pool. The context is irrelevant. The number is the identity.</p>
+    <p>pool doesnt care where a frequency came from. 440Hz in the menu music and 440Hz in a sword swing — <strong>same pool entry.</strong> music, sfx, UI, ambient, voice — one frequency pool. context is irrelevant. the number is the identity.</p>
 
-    <h3>Instruments Share Frequencies</h3>
-    <p>A C4 on a piano and a C4 on a violin have the same base frequency — 261.63Hz. Only the harmonic overtones differ. The pool stores the base frequency once. The overtone pattern is a separate entry. Two completely different instruments — mostly shared pool data, with only the instrument-specific character stored separately.</p>
+    <h3>instruments share frequencies</h3>
+    <p>C4 on piano and C4 on violin — same base frequency: 261.63Hz. only the overtones differ. pool stores the base once. overtone pattern is a separate entry. two instruments. mostly shared data. only the unique character stored uniquely.</p>
 
-    <h3>Digit Trimming on Audio</h3>
-    <p>440.001Hz and 440.002Hz are indistinguishable to the human ear. Digit trimming collapses them to the same pool entry automatically. The pool stores what can actually be perceived. Everything below the threshold of human hearing is noise — and noise is never stored twice.</p>
+    <h3>digit trimming on audio</h3>
+    <p>440.001Hz and 440.002Hz — indistinguishable to human ears. digit trimming collapses them automatically. pool stores what can be perceived. noise is never stored twice.</p>
 
     <div class="highlight">
-      <p>A modern game's audio — often 20-30GB — compresses down to a pool of unique frequencies, unique overtone combinations, and unique timing patterns. Most of which repeat constantly. The pool does not store a game's music. It stores the <strong>alphabet the music is written in.</strong></p>
+      <p>modern game audio is often 20-30GB. compresses to a pool of unique frequencies, unique overtone combinations, unique timing patterns. the pool doesnt store a game's music. it stores the <strong>alphabet the music is written in.</strong></p>
     </div>
   </div>
 
@@ -1334,7 +1336,7 @@ p strong { color: var(--text); font-weight: 600; }
       </div>
     </div>
 
-    <p>If both client and server share a deterministic pool, there is no need to transmit state. Transmit the <strong>index</strong>. One byte instead of 120. The pool is the protocol.</p>
+    <p>client and server share a deterministic pool — no need to transmit state. transmit the <strong>index</strong>. one byte instead of 120. the pool IS the protocol.</p>
 
     <div class="net-compare">
       <div class="net-block bad">
@@ -1350,9 +1352,9 @@ p strong { color: var(--text); font-weight: 600; }
     </div>
 
     <h3>Queue Synchronization</h3>
-    <p>The server runs its own Script Queue. The client runs its own Script Queue. They are <strong>partially synced</strong> — not identical, but coordinated.</p>
+    <p>server has its own queue. client has its own queue. <strong>partially synced</strong> — not identical, but coordinated.</p>
 
-    <p>Player input is queued on the client and transmitted to the server. The server's queue receives the input, reads the scripts it will trigger, and pre-loads outcomes on both sides simultaneously. By the time the input resolves, both client and server already have the result pooled. The server is the canonical truth. The client is always ready to match it.</p>
+    <p>player input queued on client, transmitted to server. server queue reads the scripts that input triggers, pre-loads outcomes on both sides simultaneously. by the time input resolves — both sides already have the result pooled. server is canonical truth. client is always ready to match it.</p>
 
     <div class="tiers">
       <div class="tier common">
@@ -1379,10 +1381,10 @@ p strong { color: var(--text); font-weight: 600; }
     <h3>Anti-Cheat by Architecture</h3>
     <p>Pool indices are randomized per session per machine. No consistent addresses. The pool map lives in the compiler and ships without labels. A disassembler sees only: 1 2 3 4 5 6 7 8. There is nothing to target because the target changes every run.</p>
 
-    <h3>Future-Seen Physics — Zero Latency Movement</h3>
-    <p>This is the deepest consequence of combining deterministic physics, a shared pool, and a script queue that reads ahead. The server does not react to where a character <em>was</em> when a packet left the client. It calculates where the character <em>will be</em> when the packet arrives.</p>
+    <h3>future-seen physics — zero latency</h3>
+    <p>this is the deepest part. server doesnt react to where the character <em>was</em> when the packet left. it calculates where the character <em>will be</em> when the packet arrives.</p>
 
-    <p>Physics are deterministic. Packet travel time is known. The script queue reads the physics scripts and runs the simulation forward in time. By the time the packet arrives, both client and server have already independently calculated the exact same position. The packet is not a correction. It is a confirmation of what both sides already knew.</p>
+    <p>physics are deterministic. packet travel time is known. queue runs the simulation forward in time. by the time the packet arrives — both sides independently calculated the exact same position. the packet isnt a correction. its a confirmation of what both sides already knew.</p>
 
     <div class="compare">
       <div class="cblock bad">
@@ -1427,7 +1429,7 @@ p strong { color: var(--text); font-weight: 600; }
     </div>
 
     <div class="highlight">
-      <p>Every multiplayer game today spends enormous engineering effort on rubber-banding fixes, lag compensation systems, rollback implementations, and input delay tuning. All of that engineering exists because servers react to packets. <strong>PELTGC servers read ahead of packets.</strong> The problem class disappears at the architecture level — not patched, not compensated, not hidden. Gone.</p>
+      <p>every multiplayer game today has engineers working on rubber-banding fixes, lag comp, rollback, input delay tuning. all of that exists because servers react to packets. <strong>PELTGC servers read ahead of packets.</strong> the problem doesnt get patched. it doesnt exist.</p>
     </div>
   </div>
 
@@ -1443,11 +1445,11 @@ p strong { color: var(--text); font-weight: 600; }
       </div>
     </div>
 
-    <p>The pool is the entire game's source of truth. Corrupting it would corrupt everything — physics, rendering, networking, logic. It is the highest-value target imaginable. PELTGC protects it at the architecture level, not the software level.</p>
+    <p>the pool is the entire game's source of truth. corrupt it — you corrupt everything. physics, rendering, networking, logic. highest-value target imaginable. protected at the architecture level, not software.</p>
 
-    <h3>Why Traditional Anti-Cheat Fails</h3>
-    <p>Traditional anti-cheat scans for known signatures — specific memory addresses, known injection patterns, recognized cheat executables. Cheaters update. Signatures become stale. It is a perpetual arms race that the defender always loses eventually.</p>
-    <p>PELTGC has no signatures to hunt. The pool indices are randomized per session per machine at compile time. A disassembler sees only: 1 2 3 4 5 6. The labels that would tell an attacker what each index means ship <strong>only in the compiler</strong>, which is never distributed. There is nothing to reverse engineer because the meaningful part was never sent.</p>
+    <h3>why traditional anti-cheat fails</h3>
+    <p>traditional anti-cheat scans for known signatures. cheaters update. signatures go stale. perpetual arms race. defender always loses eventually.</p>
+    <p>PELTGC has no signatures. pool indices randomized per session per machine at compile time. disassembler sees: 1 2 3 4 5 6. the labels that tell an attacker what each index means ship <strong>only in the compiler</strong> — never distributed. nothing to reverse engineer because the meaningful part was never sent.</p>
 
     <div class="sec-rows">
       <div class="sec-row">
@@ -1477,10 +1479,10 @@ p strong { color: var(--text); font-weight: 600; }
       </div>
     </div>
 
-    <h3>The Mechanism</h3>
-    <p>Attempt 1 is silent because the system wants the attacker to keep going. Confidence makes attackers careless. Attempt 2 is the confirmation — the system now has a behavioral fingerprint, not just a single event. Attempt 3 escalates to hardware level because reinstalling changes nothing — the machine is the pool, and the machine is known. Attempt 4 is permanent because at this point the hardware itself is considered compromised.</p>
+    <h3>the mechanism</h3>
+    <p>attempt 1 is silent because the system wants the attacker to keep going. confidence makes them careless. attempt 2 — behavioral fingerprint confirmed, not just a single event. attempt 3 escalates to hardware because reinstalling changes nothing — the machine is the pool, and the machine is known. attempt 4 is permanent. hardware is compromised.</p>
 
-    <div class="note">Pool indices randomized per session per machine. No consistent addresses. Pool map stays in compiler. Ships without labels. Disassembler sees: 1 2 3 4 5 6 7 8. Even if an attacker perfectly reads the pool, they read meaningless numbers with no way to know what any of them represent.</div>
+    <div class="note">pool indices randomized per session per machine. no consistent addresses. pool map stays in compiler. ships without labels. disassembler sees: 1 2 3 4 5 6 7 8. even if an attacker perfectly reads the pool — meaningless numbers. no context. no way to know what any of them represent.</div>
   </div>
 
 <div class="divider"></div>
@@ -1495,9 +1497,9 @@ p strong { color: var(--text); font-weight: 600; }
       </div>
     </div>
 
-    <p>A 100GB game is not 100GB of unique information. It is a small amount of unique information repeated, tiled, referenced, and duplicated until it fills 100GB. PELTGC stores only what is genuinely unique. Everything else becomes an index.</p>
+    <p>a 100GB game isnt 100GB of unique information. its a small amount of unique information repeated, tiled, referenced, duplicated until it fills 100GB. PELTGC stores only what is genuinely unique. everything else becomes an index.</p>
 
-    <div class="quote">The actual unique information in a 100GB game is a fraction of that. The rest is repetition dressed up as size.</div>
+    <div class="quote">the actual unique information in a 100GB game is a fraction of that. the rest is repetition dressed up as size.</div>
 
     <h3>Where the Redundancy Lives</h3>
 
@@ -1529,8 +1531,8 @@ p strong { color: var(--text); font-weight: 600; }
       </div>
     </div>
 
-    <h3>The Result</h3>
-    <p>A 100GB game on a traditional engine becomes approximately <strong>5GB or less</strong> under PELTGC. Open world games with tiling terrain and repeated content compress the hardest. Heavily hand-crafted games with fully unique assets compress the least — but even those see massive savings on physics, audio frequencies, and animation sub-components.</p>
+    <h3>the result</h3>
+    <p>100GB game → <strong>5GB or less</strong>. open world games with tiling terrain compress the hardest. fully hand-crafted games with unique assets compress the least — but still save massively on physics, audio frequencies, animation sub-components.</p>
 
     <div class="compare">
       <div class="cblock bad">
@@ -1552,7 +1554,7 @@ p strong { color: var(--text); font-weight: 600; }
     </div>
 
     <div class="highlight">
-      <p>This is not compression in the traditional sense — zipping a file and unzipping it later. The pool <strong>never had the redundancy to begin with.</strong> The game never stored what it didn't need. The 95GB that disappears was never real information — it was the same information repeated 20 times, finally counted once.</p>
+      <p>this isnt compression in the zip-file sense. the pool <strong>never had the redundancy to begin with.</strong> the game never stored what it didnt need. the 95GB that disappears was never real information — it was the same thing repeated 20 times, finally counted once.</p>
     </div>
   </div>
 
@@ -1568,15 +1570,15 @@ p strong { color: var(--text); font-weight: 600; }
       </div>
     </div>
 
-    <p>PELTGC is not just a runtime philosophy. It is a compiler. The compiler controls bytecode directly, sitting below whatever language the game is written in. It intercepts compiled output and applies the pool logic at the instruction level. The source language is irrelevant.</p>
+    <p>PELTGC isnt just a runtime philosophy. its a compiler. sits below whatever language the game is written in. intercepts compiled output, applies pool logic at the instruction level. source language is irrelevant.</p>
 
-    <p>The architecture: game written in anything → compiles to bytecode → PELTGC intercepts → pools, queues, redirects, deduplicates → hardware receives clean optimized instructions. The developer touches nothing. PELTGC handles everything underneath, invisibly.</p>
+    <p>game written in anything → bytecode → PELTGC intercepts → pools, queues, redirects, deduplicates → hardware gets clean optimized instructions. developer touches nothing. PELTGC handles everything underneath. invisibly.</p>
 
-    <h3>How Interception Works</h3>
-    <p>Every compiler — GCC, LLVM, whatever the game uses — produces an intermediate output before generating final machine code. PELTGC inserts itself at that stage. It receives the intermediate representation, applies pool logic to every instruction, replaces duplicate operations with index lookups, inserts queue pre-load calls, and then passes the result forward to final compilation. The game's compiler never knows PELTGC was there. The hardware never sees the unoptimized version.</p>
+    <h3>how interception works</h3>
+    <p>every compiler — GCC, LLVM, whatever — produces intermediate output before final machine code. PELTGC inserts at that stage. receives the intermediate representation, applies pool logic, replaces duplicates with index lookups, inserts queue pre-load calls, passes forward to final compilation. the game's compiler never knew PELTGC was there. hardware never sees the unoptimized version.</p>
 
-    <h3>Human-Readable Bytecode</h3>
-    <p>Most bytecode is unreadable by design — it is for machines, not humans. PELTGC bytecode is different. Every operation is annotated with what the pool did. A developer reading it can see exactly what was routed, what was computed fresh, what the queue pre-loaded, and what was merged.</p>
+    <h3>human-readable bytecode</h3>
+    <p>most bytecode is unreadable by design — for machines, not humans. PELTGC bytecode is different. every operation annotated with what the pool did. developer reads it and immediately sees what was routed, what was new, what the queue pre-loaded.</p>
 
     <div class="code-block good">
       <div class="code-tag">PELTGC BYTECODE — human readable</div>
@@ -2202,5 +2204,5 @@ p strong { color: var(--text); font-weight: 600; }
   </div>
 
 </div>
-</body>
-</html>
+
+</body></html>
